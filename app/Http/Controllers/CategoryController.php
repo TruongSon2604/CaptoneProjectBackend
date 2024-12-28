@@ -37,7 +37,11 @@ class CategoryController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a new category in the database.
+     *
+     * @param \App\Http\Requests\CategoryRequest $request The validated category data.
+     *
+     * @return \Illuminate\Http\JsonResponse The JSON response indicating success or failure.
      */
     public function store(CategoryRequest $request): JsonResponse
     {
@@ -59,6 +63,10 @@ class CategoryController extends Controller
 
     /**
      * Display the specified resource.
+     *
+     * @param  int $id
+     *
+     * @return JsonResponse
      */
     public function show(int $id): JsonResponse
     {
@@ -84,25 +92,35 @@ class CategoryController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update a category in the database.
+     *
+     * @param \App\Http\Requests\CategoryRequest $request The validated category data.
+     *
+     * @return \Illuminate\Http\JsonResponse The JSON response indicating success or failure.
      */
     public function update(CategoryRequest $request, int $id): JsonResponse
     {
+        try {
+            $validatedData = $request->validated();
+            $updateResult = $this->categoryService->update($validatedData, $id);
+            if ($updateResult) {
+                return response()->json([
+                    'status' => true,
+                    'data' => $updateResult,
+                    'message' => 'Category updated successfully',
+                ], 200);
+            }
 
-        $validatedData = $request->validated();
-        $updateResult = $this->categoryService->update($validatedData, $id);
-        if ($updateResult) {
             return response()->json([
-                'status' => true,
-                'data' => $updateResult,
-                'message' => 'Category updated successfully',
-            ], 200);
+                'status' => false,
+                'message' => 'Category not found',
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'An error occurred: ' . $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'status' => false,
-            'message' => 'Category not found',
-        ], 404);
     }
 
     /**
@@ -114,18 +132,25 @@ class CategoryController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        $category = $this->categoryService->delete($id);
-        if ($category) {
-            return response()->json([
-                'status' => true,
-                'data' => $category,
-                'message' => 'Delete Category Successful'
-            ]);
-        }
+        try {
+            $category = $this->categoryService->delete($id);
+            if ($category) {
+                return response()->json([
+                    'status' => true,
+                    'data' => $category,
+                    'message' => 'Delete Category Successful'
+                ]);
+            }
 
-        return response()->json([
-            'status' => false,
-            'message' => 'Category not found',
-        ], 404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Category not found',
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'An error occurred: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

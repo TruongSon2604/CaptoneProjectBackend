@@ -19,6 +19,13 @@ class CategoryRepository extends BaseRepository implements CategoryInterface
         return Category::class;
     }
 
+    /**
+     * Create a new category with the provided data.
+     *
+     * @param array $data Category data including 'name', 'description', and 'image'.
+     *
+     * @return \App\Models\Category The created category instance.
+     */
     public function create(array $data): Category
     {
         $image = $data['image'];
@@ -33,6 +40,14 @@ class CategoryRepository extends BaseRepository implements CategoryInterface
         ]);
     }
 
+    /**
+     * Update the specified category with new data.
+     *
+     * @param array $data Updated category data including 'name', 'description', and optionally 'image'.
+     * @param int $id The ID of the category to update.
+     * 
+     * @return \App\Models\Category|false The updated category instance, or false if not found.
+     */
     public function update(array $data, int $id): mixed
     {
         $category = $this->find($id);
