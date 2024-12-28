@@ -3,6 +3,8 @@
 namespace App\Repositories;
 
 use App\Contracts\BaseInterface;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 
 abstract class BaseRepository implements BaseInterface
 {
@@ -48,7 +50,7 @@ abstract class BaseRepository implements BaseInterface
      *
      * @return \Illuminate\Database\Eloquent\Collection A collection of all records from the model.
      */
-    public function getAll(): mixed
+    public function getAll(): Collection
     {
         return $this->model::all();
     }
@@ -56,13 +58,19 @@ abstract class BaseRepository implements BaseInterface
     /**
      * Find a record by its ID.
      *
-     * @param mixed $id The ID of the record to retrieve.
+     * @param int $id The ID of the record to retrieve.
      *
-     * @return mixed The model instance or null if not found.
+     * @return mixed The model instance or false if not found.
      */
     public function find(int $id): mixed
     {
-        return $this->model->find($id);
+        $category = $this->model::find($id);
+
+        if (!$category) {
+            return false;
+        }
+
+        return $category;
     }
 
     /**
@@ -72,13 +80,13 @@ abstract class BaseRepository implements BaseInterface
      *
      * @return bool True if the record was deleted successfully, false otherwise.
      */
-    public function delete(int $id): bool
+    public function delete(int $id): mixed
     {
-        $result = $this->find($id);
-        if ($result) {
-            $result->delete();
+        $category = $this->find($id);
+        if ($category) {
+            $category->delete();
 
-            return true;
+            return $category;
         }
 
         return false;

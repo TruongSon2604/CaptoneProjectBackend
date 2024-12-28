@@ -15,4 +15,11 @@ Route::group([
     Route::post('/me', [AuthController::class, 'me'])->middleware('auth:api')->name('me');
 });
 
-Route::apiResource('categories', CategoryController::class);
+//Categories
+
+Route::group([
+    'middleware' => 'api',
+], function () {
+    Route::apiResource('categories', CategoryController::class)->except(['update'])->middleware('auth:api');
+    Route::post('categories/{category}', [CategoryController::class, 'update'])->middleware('auth:api');
+});
