@@ -15,14 +15,16 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function register() {
+    public function register()
+    {
         $validator = Validator::make(request()->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|confirmed|min:8',
+            'image' => 'required|string'
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
 
@@ -30,6 +32,7 @@ class AuthController extends Controller
         $user->name = request()->name;
         $user->email = request()->email;
         $user->password = bcrypt(request()->password);
+        $user->image = request()->image;
         $user->save();
 
         return response()->json($user, 201);
@@ -45,7 +48,7 @@ class AuthController extends Controller
     {
         $credentials = request(['email', 'password']);
 
-        if (! $token = auth()->attempt($credentials)) {
+        if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
