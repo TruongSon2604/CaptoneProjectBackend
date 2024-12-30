@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LoginGooleController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StatusController;
 
 Route::group([
@@ -42,3 +43,10 @@ Route::group([
     Route::post('status/{status}', [StatusController::class, 'update'])->middleware('auth:api');
 });
 
+//Product
+Route::group([
+    'middleware' => 'api',
+], function () {
+    Route::apiResource('product', ProductController::class)->except(['update'])->middleware('auth:api');
+    Route::post('product/{product}', [ProductController::class, 'update'])->middleware('auth:api');
+});

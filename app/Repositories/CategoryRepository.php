@@ -29,9 +29,9 @@ class CategoryRepository extends BaseRepository implements CategoryInterface
     public function create(array $data): Category
     {
         $image = $data['image'];
-        $imageName = 'book_' . time() . '.' . $image->getClientOriginalExtension();
-        $image->storeAs('books', $imageName, 'public');
-        $imagePath = 'storage/books/' . $imageName;
+        $imageName = 'category_' . time() . '.' . $image->getClientOriginalExtension();
+        $image->storeAs('categories', $imageName, 'public');
+        $imagePath = 'storage/categories/' . $imageName;
 
         return Category::create([
             'description' => $data['description'],
@@ -57,11 +57,18 @@ class CategoryRepository extends BaseRepository implements CategoryInterface
         }
 
         if (isset($data['image'])) {
+            $oldImagePath = $category->image;
+
             $image = $data['image'];
-            $imageName = 'book_' . time() . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('books', $imageName, 'public');
-            $imagePath = 'storage/books/' . $imageName;
+            $imageName = 'category_' . time() . '.' . $image->getClientOriginalExtension();
+            Storage::disk('public')->put('categories/' . $imageName, file_get_contents($image));
+            $imagePath = 'storage/categories/' . $imageName;
+
             $data['image'] = $imagePath;
+
+            if ($oldImagePath && Storage::disk('public')->exists(str_replace('storage/', '', $oldImagePath))) {
+                Storage::disk('public')->delete(str_replace('storage/', '', $oldImagePath));
+            }
         }
 
         $category->update([
@@ -81,5 +88,19 @@ class CategoryRepository extends BaseRepository implements CategoryInterface
     public function getAllWithPagination(): mixed
     {
         return Category::paginate(Category::ITEM_PER_PAGE);
+    }
+
+    public function delete(int $id): mixed
+    {
+        $category = $this->find($id);
+        if (!$category) {
+            return false;
+        }
+        $oldImagePath = $category->image;
+        if ($oldImagePath && Storage::disk('public')->exists(str_replace('storage/', '', $oldImagePath))) {
+            Storage::disk('public')->delete(str_replace('storage/', '', $oldImagePath));
+        }
+        $category->delete();
+        return true;
     }
 }

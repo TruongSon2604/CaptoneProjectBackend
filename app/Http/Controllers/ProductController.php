@@ -2,23 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CategoryRequest;
-use App\Http\Requests\CategoryUpdateRequest;
-use App\Services\CategoryService;
-use App\Models\User;
-use Exception;
+use App\Http\Requests\ProductRequest;
+use App\Http\Requests\UpdateProductRequest;
+use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class CategoryController extends Controller
+class ProductController extends Controller
 {
     /**
-     * CategoryController constructor.
+     * ProductController constructor.
      *
-     * @param CategoryService $categoryService The service used to handle category logic.
+     * @param ProductService $productService The service used to handle category logic.
      */
-    public function __construct(protected CategoryService $categoryService)
+    public function __construct(protected ProductService $productService)
     {
 
     }
@@ -28,30 +25,34 @@ class CategoryController extends Controller
      */
     public function index(): JsonResponse
     {
-        $categories = $this->categoryService->getAllWithPagination();
+        $products = $this->productService->getAllWithPagination();
         return response()->json([
+            'data' => $products,
             'status' => true,
-            'data' => $categories,
-            'message' => "Get Category Successful"
+            'message' => 'Get Product Successful'
         ]);
     }
 
     /**
-     * Store a new category in the database.
-     *
-     * @param \App\Http\Requests\CategoryRequest $request The validated category data.
-     *
-     * @return \Illuminate\Http\JsonResponse The JSON response indicating success or failure.
+     * Show the form for creating a new resource.
      */
-    public function store(CategoryRequest $request): JsonResponse
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(ProductRequest $request): JsonResponse
     {
         try {
-            $category = $this->categoryService->create($request->validated());
+            $product = $this->productService->create($request->validated());
 
             return response()->json([
                 'status' => true,
-                'message' => 'Category created successfully',
-                'data' => $category
+                'message' => 'Product created successfully',
+                'data' => $product
             ], JsonResponse::HTTP_CREATED);
         } catch (\Exception $e) {
             return response()->json([
@@ -63,24 +64,20 @@ class CategoryController extends Controller
 
     /**
      * Display the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return JsonResponse
      */
     public function show(int $id): JsonResponse
     {
         try {
-            $category = $this->categoryService->find($id);
-            if (!$category) {
-                throw new \Exception("Category not found");
+            $product = $this->productService->find($id);
+            if (!$product) {
+                throw new \Exception("Product not found");
             }
 
             return response()->json([
                 'status' => true,
-                'message' => 'Show category successfully',
-                'data' => $category
-            ], 200);
+                'message' => 'Show Product successfully',
+                'data' => $product
+            ], JsonResponse::HTTP_OK);
 
         } catch (\Exception $e) {
 
@@ -92,28 +89,32 @@ class CategoryController extends Controller
     }
 
     /**
-     * Update a category in the database.
-     *
-     * @param \App\Http\Requests\CategoryUpdateRequest $request The validated category data.
-     *
-     * @return \Illuminate\Http\JsonResponse The JSON response indicating success or failure.
+     * Show the form for editing the specified resource.
      */
-    public function update(CategoryUpdateRequest $request, int $id): JsonResponse
+    public function edit(string $id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateProductRequest $request, int $id): JsonResponse
     {
         try {
             $validatedData = $request->validated();
-            $updateResult = $this->categoryService->update($validatedData, $id);
+            $updateResult = $this->productService->update($validatedData, $id);
             if ($updateResult) {
                 return response()->json([
                     'status' => true,
                     'data' => $updateResult,
-                    'message' => 'Category updated successfully',
+                    'message' => 'Product updated successfully',
                 ], 200);
             }
 
             return response()->json([
                 'status' => false,
-                'message' => 'Category not found',
+                'message' => 'Product not found',
             ], JsonResponse::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             return response()->json([
@@ -124,27 +125,23 @@ class CategoryController extends Controller
     }
 
     /**
-     * Delete category by id
-     *
-     * @param  int $id
-     *
-     * @return JsonResponse
+     * Remove the specified resource from storage.
      */
     public function destroy(int $id): JsonResponse
     {
         try {
-            $category = $this->categoryService->delete($id);
-            if ($category) {
+            $product = $this->productService->delete($id);
+            if ($product) {
                 return response()->json([
                     'status' => true,
-                    'data' => $category,
-                    'message' => 'Delete Category Successful'
+                    'data' => $product,
+                    'message' => 'Delete Product Successful'
                 ]);
             }
 
             return response()->json([
                 'status' => false,
-                'message' => 'Category not found',
+                'message' => 'Product not found',
             ], JsonResponse::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             return response()->json([
