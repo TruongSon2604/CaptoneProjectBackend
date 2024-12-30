@@ -28,7 +28,7 @@ class CategoryController extends Controller
      */
     public function index(): JsonResponse
     {
-        $categories = $this->categoryService->getAll();
+        $categories = $this->categoryService->getAllWithPagination();
         return response()->json([
             'status' => true,
             'data' => $categories,
@@ -52,12 +52,12 @@ class CategoryController extends Controller
                 'status' => true,
                 'message' => 'Category created successfully',
                 'data' => $category
-            ], 201);
+            ], JsonResponse::HTTP_CREATED);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'An error occurred: ' . $e->getMessage()
-            ], 500);
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -87,7 +87,7 @@ class CategoryController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'An error occurred: ' . $e->getMessage()
-            ], 500);
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -114,7 +114,7 @@ class CategoryController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Category not found',
-            ], 404);
+            ], JsonResponse::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -145,12 +145,12 @@ class CategoryController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Category not found',
-            ], 404);
+            ], JsonResponse::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'An error occurred: ' . $e->getMessage()
-            ], 500);
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

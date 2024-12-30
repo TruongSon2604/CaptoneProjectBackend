@@ -21,4 +21,12 @@ interface CategoryInterface extends BaseInterface
      * @return \App\Models\Category
      */
     public function update(array $data, int $id);
+
+    /**
+     * Get all Category Paginate records .
+     *
+     * @return mixed
+     */
+    public function getAllWithPagination();
+
 }

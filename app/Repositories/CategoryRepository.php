@@ -45,7 +45,7 @@ class CategoryRepository extends BaseRepository implements CategoryInterface
      *
      * @param array $data Updated category data including 'name', 'description', and optionally 'image'.
      * @param int $id The ID of the category to update.
-     * 
+     *
      * @return \App\Models\Category|false The updated category instance, or false if not found.
      */
     public function update(array $data, int $id): mixed
@@ -71,5 +71,15 @@ class CategoryRepository extends BaseRepository implements CategoryInterface
         ]);
 
         return $category;
+    }
+
+    /**
+     * Retrieve all records Categories pagination.
+     *
+     * @return mixed
+     */
+    public function getAllWithPagination(): mixed
+    {
+        return Category::paginate(Category::ITEM_PER_PAGE);
     }
 }
