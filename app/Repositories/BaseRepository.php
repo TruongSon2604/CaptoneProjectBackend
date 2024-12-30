@@ -78,7 +78,7 @@ abstract class BaseRepository implements BaseInterface
      *
      * @param mixed $id The ID of the record to delete.
      *
-     * @return bool True if the record was deleted successfully, false otherwise.
+     * @return mixed True if the record was deleted successfully, false otherwise.
      */
     public function delete(int $id): mixed
     {

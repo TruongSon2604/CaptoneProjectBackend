@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Status extends Model
 {
     use HasFactory;
+
+    const ITEM_PER_PAGE= 5;
+
     protected $fillable = [
         'name',
     ];

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\StatusController;
 
 Route::group([
     'middleware' => 'api',
@@ -16,10 +17,18 @@ Route::group([
 });
 
 //Categories
-
 Route::group([
     'middleware' => 'api',
 ], function () {
-    Route::apiResource('categories', CategoryController::class)->except(['update']);
+    Route::apiResource('categories', CategoryController::class)->except(['update'])->middleware('auth:api');
     Route::post('categories/{category}', [CategoryController::class, 'update'])->middleware('auth:api');
 });
+
+//Status
+Route::group([
+    'middleware' => 'api',
+], function () {
+    Route::apiResource('status', StatusController::class)->except(['update'])->middleware('auth:api');
+    Route::post('status/{status}', [StatusController::class, 'update'])->middleware('auth:api');
+});
+
