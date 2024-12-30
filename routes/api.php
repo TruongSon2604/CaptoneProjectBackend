@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\LoginGooleController;
 use App\Http\Controllers\StatusController;
 
 Route::group([
@@ -15,6 +16,15 @@ Route::group([
     Route::post('/refresh', [AuthController::class, 'refresh'])->middleware('auth:api')->name('refresh');
     Route::post('/me', [AuthController::class, 'me'])->middleware('auth:api')->name('me');
 });
+
+//google
+// Route::group([
+//     'middleware' => 'api',
+// ], function () {
+//     Route::get('/auth/google/redirect', [LoginGooleController::class, 'redirectToGoogle']);
+//     Route::get('/auth/google/callback', [LoginGooleController::class, 'handleGoogleCallback']);
+// });
+
 
 //Categories
 Route::group([
