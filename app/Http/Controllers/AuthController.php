@@ -34,6 +34,7 @@ class AuthController extends Controller
         $user = new User;
         $user->name = request()->name;
         $user->email = request()->email;
+        $user->phone_number=request()->phone_number;
         $user->password = bcrypt(request()->password);
         $user->image = request()->image;
         $user->save();
@@ -87,7 +88,7 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(Auth::refresh());
+        return $this->respondWithToken(auth()->refresh());
     }
 
     /**
@@ -102,7 +103,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => Auth::factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL() * 60
         ]);
     }
 }

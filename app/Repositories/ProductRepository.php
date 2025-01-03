@@ -33,12 +33,13 @@ class ProductRepository extends BaseRepository implements ProductInterface
         Storage::disk('public')->put('products/' . $imageName, file_get_contents($image));
         $imagePath = 'storage/products/' . $imageName;
 
-        return Product::create([
+        return $this->getModel()::create([
             'description' => $data['description'],
             'name' => $data['name'],
             'price' => $data['price'],
             'categories_id' => $data['categories_id'],
             'image' => $imagePath,
+            'stock_quantity' => $data['stock_quantity']
         ]);
     }
 
@@ -75,8 +76,11 @@ class ProductRepository extends BaseRepository implements ProductInterface
 
         $product->update([
             'description' => $data['description'],
+            'price' => $data['price'],
             'name' => $data['name'],
             'image' => $data['image'] ?? $product->image,
+            'stock_quantity' => $data['stock_quantity'],
+            'categories_id' => $data['categories_id'],
         ]);
 
         return $product;
@@ -89,7 +93,7 @@ class ProductRepository extends BaseRepository implements ProductInterface
      */
     public function getAllWithPagination(): mixed
     {
-        return Product::paginate(Product::ITEM_PER_PAGE);
+        return $this->getModel()::paginate(Product::ITEM_PER_PAGE);
     }
 
     public function delete(int $id): mixed
