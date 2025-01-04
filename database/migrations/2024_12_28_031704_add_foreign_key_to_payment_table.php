@@ -15,7 +15,6 @@ return new class extends Migration
             //
             $table->foreignId('orders_id')->constrained('orders')->onDelete('cascade');
             $table->foreignId('payment_method_id')->constrained('payment_methods')->onDelete('cascade');
-            $table->foreignId('status_id')->constrained('statuses')->onDelete('cascade');
         });
     }
 
@@ -28,7 +27,6 @@ return new class extends Migration
             //
             $table->dropForeign(['orders_id']);
             $table->dropForeign(['payment_method_id']);
-            $table->dropForeign(['status_id']);
         });
     }
 };

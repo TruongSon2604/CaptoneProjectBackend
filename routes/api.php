@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LoginGooleController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StatusController;
+use App\Http\Controllers\ZaloPayController;
 
 Route::group([
     'middleware' => 'api',
@@ -50,3 +51,7 @@ Route::group([
     Route::apiResource('product', ProductController::class)->except(['update'])->middleware('auth:api');
     Route::post('product/{product}', [ProductController::class, 'update'])->middleware('auth:api');
 });
+
+Route::post('/payment', [ZaloPayController::class, 'payment']);
+Route::post('/payment/callback', [ZaloPayController::class, 'callback']);
+Route::get('/payment/status/{iddh}', [ZaloPayController::class, 'get_status']);

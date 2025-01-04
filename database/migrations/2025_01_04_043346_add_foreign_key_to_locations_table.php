@@ -11,13 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
-            $table->id();
-            // $table->bigInteger('orders_id');
-            // $table->bigInteger('payment_method_id');
-            $table->tinyInteger('status');
-            $table->string('transaction_id');
-            $table->timestamps();
+        Schema::table('locations', function (Blueprint $table) {
+            $table->foreignId('shipper_id')->constrained('shippers')->onDelete('cascade');  // Shipper mà vị trí này thuộc về
         });
     }
 
@@ -26,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payments');
+        Schema::table('locations', function (Blueprint $table) {
+            $table->dropForeign(['shipper_id']);
+        });
     }
 };

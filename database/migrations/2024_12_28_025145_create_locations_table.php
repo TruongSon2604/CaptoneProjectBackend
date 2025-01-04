@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
+        //Theo dõi đơn hàng và shipper
+        Schema::create('locations', function (Blueprint $table) {
             $table->id();
-            // $table->bigInteger('orders_id');
-            // $table->bigInteger('payment_method_id');
-            $table->tinyInteger('status');
-            $table->string('transaction_id');
+            // 
+            $table->decimal('latitude', 10, 6);
+            $table->decimal('longitude', 10, 6);
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('locations');
     }
 };
