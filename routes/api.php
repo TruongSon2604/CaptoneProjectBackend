@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddressController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
@@ -34,23 +35,20 @@ Route::group([
 ], function () {
     Route::apiResource('categories', CategoryController::class)->except(['update'])->middleware('auth:api');
     Route::post('categories/{category}', [CategoryController::class, 'update'])->middleware('auth:api');
-});
 
-//Status
-Route::group([
-    'middleware' => 'api',
-], function () {
+    //Status
     Route::apiResource('status', StatusController::class)->except(['update'])->middleware('auth:api');
     Route::post('status/{status}', [StatusController::class, 'update'])->middleware('auth:api');
-});
 
-//Product
-Route::group([
-    'middleware' => 'api',
-], function () {
+    //Product
     Route::apiResource('product', ProductController::class)->except(['update'])->middleware('auth:api');
     Route::post('product/{product}', [ProductController::class, 'update'])->middleware('auth:api');
+
+    //Address
+    Route::apiResource('address', AddressController::class)->except(['update'])->middleware('auth:api');
+    Route::post('address/{address}', [AddressController::class, 'update'])->middleware('auth:api');
 });
+
 
 Route::post('/payment', [ZaloPayController::class, 'payment']);
 Route::post('/payment/callback', [ZaloPayController::class, 'callback']);
