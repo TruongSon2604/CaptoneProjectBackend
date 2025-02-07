@@ -5,12 +5,14 @@ namespace App\Providers;
 use App\Contracts\AddressesInterface;
 use App\Contracts\CategoryInterface;
 use App\Contracts\ProductInterface;
+use App\Contracts\ShipperInterface;
 use App\Contracts\StatusInterface;
 use App\Models\Address;
 use App\Models\Status;
 use App\Repositories\AddressRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\ProductRepository;
+use App\Repositories\ShipperRepository;
 use App\Repositories\StatusRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -25,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(StatusInterface::class,StatusRepository::class);
         $this->app->bind(ProductInterface::class,ProductRepository::class);
         $this->app->bind(AddressesInterface::class,AddressRepository::class);
+        $this->app->bind(ShipperInterface::class,ShipperRepository::class);
     }
 
     /**

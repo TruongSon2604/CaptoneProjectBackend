@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LoginGooleController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ShipperController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\ZaloPayController;
 
@@ -47,8 +48,24 @@ Route::group([
     //Address
     Route::apiResource('address', AddressController::class)->except(['update'])->middleware('auth:api');
     Route::post('address/{address}', [AddressController::class, 'update'])->middleware('auth:api');
+
+    //Shipper
+    Route::apiResource('shipper', ShipperController::class)->except(['update']);
+    Route::post('shipper/{shipper}', [ShipperController::class, 'update']);
+    Route::post('shiper/register', [ShipperController::class, 'register']);
+    Route::post('shiper/login', [ShipperController::class, 'login']);
+    Route::get('shiper/email/verify/{id}/{hash}', [ShipperController::class, 'verifyEmail'])->name('verification.verify');
 });
 
+// Register the shipper
+
+
+// Route::middleware(['auth:api', 'verified'])->group(function () {
+//     // Your protected routes here
+//     Route::get('/abc', function () {
+//         return response()->json(['message' => 'You have access to this route.']);
+//     });
+// });
 
 Route::post('/payment', [ZaloPayController::class, 'payment']);
 Route::post('/payment/callback', [ZaloPayController::class, 'callback']);
