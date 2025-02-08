@@ -83,4 +83,17 @@ class ProductService
     {
         return $this->productRepository->getAllWithPagination();
     }
+
+    /**
+     * Get the discounted price of products.
+     *
+     * This method retrieves the list of products from the product repository.
+     *
+     * @return mixed The list of products.
+     */
+    public function getDiscountedPrice(): mixed
+    {
+        $products = $this->productRepository->getProducts();
+        return $products;
+    }
 }

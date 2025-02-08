@@ -150,4 +150,20 @@ class ProductController extends Controller
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function getDiscountedPrice(): JsonResponse
+    {
+        $products= $this->productService->getDiscountedPrice();
+        return response()->json($products->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'image' => $product->image,
+                'description' => $product->description,
+                'original_price' => $product->price,
+                'discounted_price' => $product->discounted_price,
+                'discount_percent' => optional($product->discount)->percent_discount,
+            ];
+            }));
+    }
 }

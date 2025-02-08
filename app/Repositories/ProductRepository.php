@@ -96,6 +96,13 @@ class ProductRepository extends BaseRepository implements ProductInterface
         return $this->getModel()::paginate(Product::ITEM_PER_PAGE);
     }
 
+    /**
+     * Delete a product by its ID and remove its associated image from storage.
+     *
+     * @param int $id The ID of the product to delete.
+     *
+     * @return bool Returns true if the product was deleted, false if not found.
+     */
     public function delete(int $id): mixed
     {
         $product = $this->find($id);
@@ -108,5 +115,15 @@ class ProductRepository extends BaseRepository implements ProductInterface
         }
         $product->delete();
         return true;
+    }
+
+    /**
+     * Retrieve all products with their associated discount relationships.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection A collection of products with discount relationships.
+     */
+    public function getProducts(): mixed
+    {
+        return $this->getModel()::with('discount')->get();
     }
 }

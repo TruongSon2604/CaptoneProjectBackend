@@ -5,6 +5,7 @@ use App\Http\Controllers\CouponController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\LoginGooleController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StatusController;
@@ -38,6 +39,9 @@ Route::group([
     //product
     Route::get('/product', [ProductController::class, 'index']);
     Route::get('/product/{product}', [ProductController::class, 'show']);
+    //discount
+    Route::get('/discount', [DiscountController::class, 'index']);
+    Route::get('/discount/{discount}', [DiscountController::class, 'show']);
 
     Route::middleware('auth:api')->group(function () {
         Route::apiResource('categories', CategoryController::class)->except(['update'])->middleware('auth:api');
@@ -48,10 +52,10 @@ Route::group([
         Route::post('status/{status}', [StatusController::class, 'update']);
 
         //Product
-        // Route::apiResource('product', ProductController::class)->except(['update']);
         Route::post('product/{product}', [ProductController::class, 'update']);
         Route::post('/product', [ProductController::class, 'store']);
         Route::delete('/product/{product}', [ProductController::class, 'destroy']);
+        Route::get('/getDiscountProduct', [ProductController::class, 'getDiscountedPrice']);
 
         //Coupon
         Route::get('/coupon', [CouponController::class, 'index']);
@@ -63,6 +67,11 @@ Route::group([
         //Address
         Route::apiResource('address', AddressController::class)->except(['update']);
         Route::post('address/{address}', [AddressController::class, 'update']);
+
+        //Discount
+        Route::post('discount/{discount}', [DiscountController::class, 'update']);
+        Route::post('/discount', [DiscountController::class, 'store']);
+        Route::delete('/discount/{discount}', [DiscountController::class, 'destroy']);
     });
 
 });
