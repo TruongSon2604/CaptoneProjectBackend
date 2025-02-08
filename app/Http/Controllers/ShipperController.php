@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AcceptOrderRequest;
 use App\Http\Requests\ShipperLoginRequest;
 use App\Http\Requests\ShipperRegisterRequest;
 use App\Http\Requests\ShipperUpdateRequest;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Password;
 
 class ShipperController extends Controller
 {
@@ -111,7 +113,7 @@ class ShipperController extends Controller
      * Display the specified shipper.
      *
      * @param int $id The ID of the shipper to display.
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      *
      * @throws \Exception If the shipper is not found.
@@ -149,9 +151,14 @@ class ShipperController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified shipper.
+     *
+     * @param ShipperUpdateRequest $request
+     * @param $id
+     *
+     * @return JsonResponse
      */
-    public function update(ShipperUpdateRequest $request, int $id): JsonResponse
+    public function update(ShipperUpdateRequest $request,int $id): JsonResponse
     {
         try {
             $validatedData = $request->validated();
@@ -205,5 +212,70 @@ class ShipperController extends Controller
                 'message' => 'An error occurred: ' . $e->getMessage()
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /**
+     * Send a password reset link to the shipper's email.
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function sendLinkk(Request $request): JsonResponse
+    {
+        dd("vao day ne");
+        $request->validate(['email' => 'required|email|exists:shippers,email']);
+
+        $status = Password::broker('shippers')->sendResetLink(
+            $request->only('email')
+        );
+
+        return $status === Password::RESET_LINK_SENT
+            ? response()->json(['message' => 'Password reset link sent.'])
+            : response()->json(['message' => 'Unable to send password reset link.'], 500);
+    }
+
+    /**
+     * Reset the shipper's password.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function resettPassword(Request $request): JsonResponse
+    {
+        $request->validate([
+            'email' => 'required|email|exists:shippers,email',
+            'token' => 'required|string',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $status = Password::broker('shippers')->reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($shipper, $password) {
+                $shipper->forceFill([
+                    'password' => Hash::make($password),
+                ])->save();
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+            ? response()->json(['message' => 'Password has been reset.'])
+            : response()->json(['message' => 'Unable to reset password.'], 500);
+    }
+
+    public function acceptOrder(AcceptOrderRequest $request)
+    {
+        $status=$this->shipperService->acceptOrder($request->validated());
+
+        if($status){
+            return response()->json([
+                'message' => 'Shipper đã nhận đơn hàng thành công!',
+                'status'=>true,
+            ]);
+        }
+        return response()->json([
+            'message' => 'Đơn hàng đã được xử lý hoặc không hợp lệ.',
+            'status'=>false,
+        ]);
     }
 }

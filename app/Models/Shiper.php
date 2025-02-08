@@ -6,10 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use App\Notifications\ShipperResetPasswordNotification;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Shiper extends Authenticatable implements MustVerifyEmail
 {
-    use Notifiable;
+    use Notifiable, CanResetPassword;
     protected $table = 'shippers';
     const ITEM_PER_PAGE=5;
 
@@ -24,4 +27,14 @@ class Shiper extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ShipperResetPasswordNotification($token));
+    }
+
+    public function locations(): HasMany
+    {
+        return $this->hasMany(Location::class);
+    }
 }

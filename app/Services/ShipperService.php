@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Order;
 use App\Repositories\ShipperRepository;
 use App\Models\Shiper;
 use Illuminate\Auth\Events\Registered;
@@ -10,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 
 class ShipperService
 {
+    public $dataNearestAvailableShipper = [];
     /**
      * ShipperRepository constructor.
      *
@@ -104,5 +106,36 @@ class ShipperService
             // return response()->json(['message' => 'Your email has not been verified. Please verify your email first.'], 403);
         }
         return $shipper;
+    }
+
+    public function getNearestAvailableShipper(array $data): mixed
+    {
+        $this->dataNearestAvailableShipper = $data;
+        return $this->shipperRepository->getNearestAvailableShipper($data);
+    }
+
+    public function getShipperById(int $id): mixed
+    {
+        return $this->shipperRepository->getShipperById($id);
+    }
+
+    public function acceptOrder(array $data): bool
+    {
+        $order = Order::findOrFail($data['order_id']);
+        $shipper = $this->shipperRepository->getShipperById($data['shipper_id']);
+
+        if ($order->status === 'pending') {
+
+            $order->status = 'in_progress';
+            $order->assigned_shipped_at = now();
+            $order->save();
+
+            $shipper->status = 'busy';
+            $shipper->save();
+
+            return true;
+        }
+
+        return false;
     }
 }

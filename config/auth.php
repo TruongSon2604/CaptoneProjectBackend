@@ -74,6 +74,10 @@ return [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+        'shippers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Shiper::class,
+        ],
     ],
 
     /*
@@ -101,6 +105,12 @@ return [
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
             'expire' => 60,
             'throttle' => 60,
+        ],
+
+        'shippers' => [
+        'provider' => 'shippers',
+        'table' => 'password_resets', // The table where password reset tokens will be stored
+        'expire' => 60, // Expiration time for the reset token (in minutes)
         ],
     ],
 

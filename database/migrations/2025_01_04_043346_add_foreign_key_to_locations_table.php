@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('locations', function (Blueprint $table) {
-            $table->foreignId('shipper_id')->constrained('shippers')->onDelete('cascade');  // Shipper mà vị trí này thuộc về
+            $table->foreignId('shipper_id')->constrained('shippers')->onDelete('cascade');
+            $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
         });
     }
 

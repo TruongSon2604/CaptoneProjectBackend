@@ -4,6 +4,7 @@ use App\Http\Controllers\AddressController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\LoginGooleController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShipperController;
@@ -55,11 +56,16 @@ Route::group([
     Route::post('shiper/register', [ShipperController::class, 'register']);
     Route::post('shiper/login', [ShipperController::class, 'login']);
     Route::get('shiper/email/verify/{id}/{hash}', [ShipperController::class, 'verifyEmail'])->name('verification.verify');
+    Route::post('shipper/forgott-password', [ShipperController::class, 'sendLinkk']);
+    Route::post('shipper/resett-password', [ShipperController::class, 'resettPassword']);
+    Route::post('shipperAcceptOrder', [ShipperController::class, 'acceptOrder']);
+
+    //Location
+    Route::post('/shipperNear', [LocationController::class, 'getNearestAvailableShipper']);
+    Route::post('/updateLocation', [LocationController::class, 'updateLocationOrder']);
 });
 
 // Register the shipper
-
-
 // Route::middleware(['auth:api', 'verified'])->group(function () {
 //     // Your protected routes here
 //     Route::get('/abc', function () {

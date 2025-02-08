@@ -7,6 +7,7 @@ use App\Models\Shiper;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class ShipperRepository extends BaseRepository implements ShipperInterface
@@ -28,7 +29,7 @@ class ShipperRepository extends BaseRepository implements ShipperInterface
      *
      * @return Shiper
      */
-    public function register(array $data):Shiper
+    public function register(array $data): Shiper
     {
         $shipper = Shiper::create([
             'name' => $data['name'],
@@ -72,14 +73,14 @@ class ShipperRepository extends BaseRepository implements ShipperInterface
         return $this->getModel()::paginate($this->getModel()::ITEM_PER_PAGE);
     }
 
-        /**
+    /**
      * Verify the email of a shipper by ID.
      *
      * @param int $data
      *
      * @return Shiper
      */
-    public function verifyEmail(int $data):Shiper
+    public function verifyEmail(int $data): Shiper
     {
         $shipper = $this->model::findOrFail($data);
         return $shipper;
@@ -96,5 +97,27 @@ class ShipperRepository extends BaseRepository implements ShipperInterface
     {
         $shipper = $this->getModel()::where('email', $data['email'])->first();
         return $shipper;
+    }
+
+    public function getNearestAvailableShipper(array $data): mixed
+    {
+        $latitude = $data['latitude'];  // Vĩ độ của bạn
+        $longitude = $data['longitude']; // Kinh độ của bạn
+
+        $sql = "
+        select *,
+        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance
+        from `shippers`
+        where `status` = ?
+        order by `distance` asc
+        limit 1
+        ";
+        $nearestShipper = DB::select($sql, [$latitude, $longitude, $latitude, 'available']);
+        return $nearestShipper;
+    }
+
+    public function getShipperById(int $id)
+    {
+        return $this->model::findOrFail($id);
     }
 }
