@@ -17,7 +17,6 @@ return new class extends Migration {
             // $table->unsignedBigInteger('coupon_id')->nullable();  // Thêm cột lưu mã giảm giá
             $table->decimal('discount_amount', 10, 2)->default(0); // Số tiền giảm giá
             $table->decimal('final_amount', 10, 2); // Tổng tiền sau giảm giá
-            // $table->unsignedBigInteger('shipper_id')->nullable();
             $table->decimal('latitude', 10, 6);  // Vĩ độ của khách hàng
             $table->decimal('longitude', 10, 6);  // Kinh độ của khách hàng
             $table->enum('status', ['pending', 'in_progress', 'completed', 'canceled'])->default('pending');
