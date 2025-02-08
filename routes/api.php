@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\CouponController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
@@ -32,20 +33,38 @@ Route::group([
 Route::group([
     'middleware' => 'api',
 ], function () {
-    Route::apiResource('categories', CategoryController::class)->except(['update'])->middleware('auth:api');
-    Route::post('categories/{category}', [CategoryController::class, 'update'])->middleware('auth:api');
+    //public//
 
-    //Status
-    Route::apiResource('status', StatusController::class)->except(['update'])->middleware('auth:api');
-    Route::post('status/{status}', [StatusController::class, 'update'])->middleware('auth:api');
+    //product
+    Route::get('/product', [ProductController::class, 'index']);
+    Route::get('/product/{product}', [ProductController::class, 'show']);
 
-    //Product
-    Route::apiResource('product', ProductController::class)->except(['update'])->middleware('auth:api');
-    Route::post('product/{product}', [ProductController::class, 'update'])->middleware('auth:api');
+    Route::middleware('auth:api')->group(function () {
+        Route::apiResource('categories', CategoryController::class)->except(['update'])->middleware('auth:api');
+        Route::post('categories/{category}', [CategoryController::class, 'update']);
 
-    //Address
-    Route::apiResource('address', AddressController::class)->except(['update'])->middleware('auth:api');
-    Route::post('address/{address}', [AddressController::class, 'update'])->middleware('auth:api');
+        //Status
+        Route::apiResource('status', StatusController::class)->except(['update']);
+        Route::post('status/{status}', [StatusController::class, 'update']);
+
+        //Product
+        // Route::apiResource('product', ProductController::class)->except(['update']);
+        Route::post('product/{product}', [ProductController::class, 'update']);
+        Route::post('/product', [ProductController::class, 'store']);
+        Route::delete('/product/{product}', [ProductController::class, 'destroy']);
+
+        //Coupon
+        Route::get('/coupon', [CouponController::class, 'index']);
+        Route::post('/coupon', [CouponController::class, 'store']);
+        Route::get('/coupon/{coupon}', [CouponController::class, 'show']);
+        Route::delete('/coupon/{coupon}', [CouponController::class, 'destroy']);
+        Route::post('/coupon/{coupon}', [CouponController::class, 'update']);
+
+        //Address
+        Route::apiResource('address', AddressController::class)->except(['update']);
+        Route::post('address/{address}', [AddressController::class, 'update']);
+    });
+
 });
 
 Route::post('/payment', [ZaloPayController::class, 'payment']);
