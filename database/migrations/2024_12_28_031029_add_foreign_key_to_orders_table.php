@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::table('orders', function (Blueprint $table) {
             //
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('shipper_id')->constrained('shippers')->onDelete('cascade');
             $table->foreignId('coupon_id')->constrained('coupons')->onDelete('cascade');
         });
     }
@@ -27,7 +26,6 @@ return new class extends Migration
         Schema::table('orders', function (Blueprint $table) {
             //
             $table->dropForeign(['user_id']);
-            $table->dropForeign(['shipper_id']);
         });
     }
 };
