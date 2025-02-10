@@ -9,6 +9,7 @@ use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\LoginGooleController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StatusController;
+use App\Http\Controllers\UserCouponController;
 use App\Http\Controllers\ZaloPayController;
 
 Route::group([
@@ -72,6 +73,12 @@ Route::group([
         Route::post('discount/{discount}', [DiscountController::class, 'update']);
         Route::post('/discount', [DiscountController::class, 'store']);
         Route::delete('/discount/{discount}', [DiscountController::class, 'destroy']);
+
+        //User coupon
+        Route::post('/user-coupon/{id}',[UserCouponController::class,'update']);
+        Route::get('/user-coupon',[UserCouponController::class,'index']);
+        Route::post('/user-coupon', [UserCouponController::class, 'store']);
+        Route::post('/delUserCoupon',[UserCouponController::class,'deleteUserCoupon']);
     });
 
 });

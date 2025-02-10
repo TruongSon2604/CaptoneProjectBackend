@@ -10,22 +10,22 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
-            $table->id();
-            // $table->bigInteger('user_id');
-            $table->string('order_number')->unique();
-            // $table->unsignedBigInteger('coupon_id')->nullable();  // Thêm cột lưu mã giảm giá
-            $table->decimal('discount_amount', 10, 2)->default(0); // Số tiền giảm giá
-            $table->decimal('final_amount', 10, 2); // Tổng tiền sau giảm giá
-            $table->decimal('latitude', 10, 6);  // Vĩ độ của khách hàng
-            $table->decimal('longitude', 10, 6);  // Kinh độ của khách hàng
-            $table->enum('status', ['pending', 'in_progress', 'completed', 'canceled'])->default('pending');
-            $table->decimal('total_amount', 10, 2);  // Tổng số tiền
-            $table->decimal('shipping_fee', 10, 2);  // Phí vận chuyển
-            $table->dateTime('assigned_shipped_at')->nullable();  // Thời gian shipper nhận đơn
-            $table->dateTime('delivered_at')->nullable();  // Thời gian giao hàng
-            $table->timestamps();
-        });
+            Schema::create('orders', function (Blueprint $table) {
+                $table->id();
+                // $table->bigInteger('user_id');
+                $table->string('order_number')->unique();
+                // $table->unsignedBigInteger('coupon_id')->nullable();  // Thêm cột lưu mã giảm giá
+                $table->decimal('discount_amount', 10, 2)->default(0); // Số tiền giảm giá
+                $table->decimal('final_amount', 10, 2); // Tổng tiền sau giảm giá
+                // $table->decimal('latitude', 10, 6);  // Vĩ độ của khách hàng
+                // $table->decimal('longitude', 10, 6);  // Kinh độ của khách hàng
+                $table->enum('status', ['pending', 'in_progress', 'completed', 'canceled'])->default('pending');
+                $table->decimal('total_amount', 10, 2);  // Tổng số tiền
+                $table->decimal('shipping_fee', 10, 2);  // Phí vận chuyển
+                $table->dateTime('assigned_shipped_at')->nullable();  // Thời gian shipper nhận đơn
+                $table->dateTime('delivered_at')->nullable();  // Thời gian giao hàng
+                $table->timestamps();
+            });
     }
 
     /**
