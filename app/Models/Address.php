@@ -11,8 +11,8 @@ class Address extends Model
     // protected $fillable=[
     //     'user_id',
     //     'district',
-    //     'commune',
-    //     'city',
+    //     'provice',
+    //     'ward',
     //     'address_detail',
     //     'phone'
     // ];

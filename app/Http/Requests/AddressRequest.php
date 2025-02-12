@@ -27,8 +27,8 @@ class AddressRequest extends FormRequest
         return [
             'user_id' => 'required|integer|exists:users,id',
             'district' => 'required|string|max:255',
-            'commune' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
+            'provice' => 'required|string|max:255',
+            'ward' => 'required|string|max:255',
             'address_detail' => 'required|string|max:255',
             'phone' => 'required|string|max:10',
         ];

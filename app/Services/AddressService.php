@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Address;
 use App\Repositories\AddressRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class AddressService
 {
@@ -38,5 +39,9 @@ class AddressService
     public function find(int $id): mixed
     {
         return $this->addressRepository->find($id);
+    }
+    public function getAddressByUser(): Collection
+    {
+        return $this->addressRepository->getAddressByUser();
     }
 }

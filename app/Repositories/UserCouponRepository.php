@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Contracts\UserCouponInterface;
 use App\Models\UserCoupon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 
 class UserCouponRepository extends BaseRepository implements UserCouponInterface
 {
@@ -15,12 +16,16 @@ class UserCouponRepository extends BaseRepository implements UserCouponInterface
 
     public function create(array $data): mixed
     {
-        $userCoupon = UserCoupon::where('user_id', $data['user_id'])
+
+        $userCoupon = UserCoupon::where('user_id', Auth::user()->id)
                             ->where('coupon_id', $data['coupon_id'])
                             ->first();
         if($userCoupon) return false;
 
-        return $this->model->create($data);
+        return $this->model->create([
+            'user_id'=>Auth::user()->id,
+            'coupon_id'=>$data['coupon_id']
+        ]);
     }
 
     public function update(array $data, int $id): UserCoupon
@@ -37,7 +42,8 @@ class UserCouponRepository extends BaseRepository implements UserCouponInterface
 
     public function deleteUserCoupon(array $data):mixed
     {
-        $data = $this->getModel()::where('user_id', $data['user_id'])
+        $user_id= Auth::user()->id;
+        $data = $this->getModel()::where('user_id', $user_id)
         ->where('coupon_id', $data['coupon_id'])
         ->first();;
         if(!$data) return false;

@@ -157,4 +157,12 @@ class AddressController extends Controller
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    public function getAddressByUser()
+    {
+        return response()->json([
+            'data'=>$this->addressService->getAddressByUser(),
+            'status' => true,
+            'message' => "Get AddressByUser Successful"
+        ]);
+    }
 }

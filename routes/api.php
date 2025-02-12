@@ -68,6 +68,7 @@ Route::group([
         //Address
         Route::apiResource('address', AddressController::class)->except(['update']);
         Route::post('address/{address}', [AddressController::class, 'update']);
+        Route::get('/getAddressByUser', [AddressController::class, 'getAddressByUser']);
 
         //Discount
         Route::post('discount/{discount}', [DiscountController::class, 'update']);

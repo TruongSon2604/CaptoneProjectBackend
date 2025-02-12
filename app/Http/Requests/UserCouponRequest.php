@@ -25,7 +25,6 @@ class UserCouponRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id'=>'required|integer|exists:users,id',
             'coupon_id'=>'required|integer|exists:coupons,id',
             'applied_at'=>'nullable|date'
         ];
