@@ -18,13 +18,14 @@ class UserCouponRepository extends BaseRepository implements UserCouponInterface
     {
 
         $userCoupon = UserCoupon::where('user_id', Auth::user()->id)
-                            ->where('coupon_id', $data['coupon_id'])
-                            ->first();
-        if($userCoupon) return false;
+            ->where('coupon_id', $data['coupon_id'])
+            ->first();
+        if ($userCoupon)
+            return false;
 
         return $this->model->create([
-            'user_id'=>Auth::user()->id,
-            'coupon_id'=>$data['coupon_id']
+            'user_id' => Auth::user()->id,
+            'coupon_id' => $data['coupon_id']
         ]);
     }
 
@@ -40,13 +41,14 @@ class UserCouponRepository extends BaseRepository implements UserCouponInterface
         return $this->model->paginate(UserCoupon::ITEM_PER_PAGE);
     }
 
-    public function deleteUserCoupon(array $data):mixed
+    public function deleteUserCoupon(array $data): mixed
     {
-        $user_id= Auth::user()->id;
+        $user_id = Auth::user()->id;
         $data = $this->getModel()::where('user_id', $user_id)
-        ->where('coupon_id', $data['coupon_id'])
-        ->first();;
-        if(!$data) return false;
+            ->where('coupon_id', $data['coupon_id'])
+            ->first();
+        if (!$data)
+            return false;
         $data->delete();
         return $data;
     }

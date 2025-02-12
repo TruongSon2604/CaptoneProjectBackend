@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\LoginGooleController;
+use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\UserCouponController;
@@ -80,6 +81,12 @@ Route::group([
         Route::get('/user-coupon',[UserCouponController::class,'index']);
         Route::post('/user-coupon', [UserCouponController::class, 'store']);
         Route::post('/delUserCoupon',[UserCouponController::class,'deleteUserCoupon']);
+
+        //Payment method
+        Route::post('/payment-method/{id}',[PaymentMethodController::class,'update']);
+        Route::get('/payment-method',[PaymentMethodController::class,'index']);
+        Route::post('/payment-method', [PaymentMethodController::class, 'store']);
+        Route::delete('/payment-method/{id}', [PaymentMethodController::class, 'destroy']);
     });
 
 });

@@ -2,33 +2,31 @@
 
 namespace App\Contracts;
 
-interface UserCouponInterface extends BaseInterface
+interface PaymentMethodInterface extends BaseInterface
 {
     /**
-     * Create a new coupon record.
+     * Create a new PaymentMethod record.
      *
      * @param array $data
      *
-     * @return mixed
+     * @return \App\Models\PaymentMethod
      */
     public function create(array $data);
 
     /**
-     * Update an existing coupon record.
+     * Update an existing PaymentMethod record.
      *
      * @param array $data
      *
-     * @return \App\Models\Category
+     * @return \App\Models\PaymentMethod
      */
     public function update(array $data, int $id);
 
     /**
-     * Get all Coupon Paginate records .
+     * Get all PaymentMethod Paginate records .
      *
      * @return mixed
      */
     public function getAllWithPagination();
-
-    public function deleteUserCoupon(array $data);
 
 }
