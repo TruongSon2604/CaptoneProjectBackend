@@ -5,6 +5,7 @@ use App\Http\Controllers\CouponController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\LoginGooleController;
 use App\Http\Controllers\PaymentMethodController;
@@ -85,8 +86,18 @@ Route::group([
         //Payment method
         Route::post('/payment-method/{id}',[PaymentMethodController::class,'update']);
         Route::get('/payment-method',[PaymentMethodController::class,'index']);
+        Route::get('/payment-method/{id}',[PaymentMethodController::class,'show']);
         Route::post('/payment-method', [PaymentMethodController::class, 'store']);
         Route::delete('/payment-method/{id}', [PaymentMethodController::class, 'destroy']);
+
+        //Comment
+        Route::post('/comment/{id}',[CommentController::class,'update']);
+        Route::get('/comment/{id}',[CommentController::class,'show']);
+        Route::get('/comment',[CommentController::class,'index']);
+        Route::post('/comment', [CommentController::class, 'store']);
+        Route::delete('/comment/{id}', [CommentController::class, 'destroy']);
+        Route::post('/UserDeleteComment', [CommentController::class, 'UserDeleteComment']);
+        Route::post('/UserUpdateComment', [CommentController::class, 'UserUpdateComment']);
     });
 
 });

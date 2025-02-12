@@ -3,11 +3,12 @@
 namespace App\Repositories;
 
 use App\Contracts\AddressInterface;
+use App\Contracts\PaymentMethodInterface;
 use App\Models\PaymentMethod;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 
-class PaymentMedthodRepository extends BaseRepository implements AddressInterface
+class PaymentMedthodRepository extends BaseRepository implements PaymentMethodInterface
 {
     public function getModel(): string
     {
