@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Contracts\AddressInterface;
+use App\Contracts\CartInterface;
 use App\Contracts\CategoryInterface;
 use App\Contracts\CommentInterface;
 use App\Contracts\CouponInterface;
@@ -12,6 +13,7 @@ use App\Contracts\StatusInterface;
 use App\Contracts\UserCouponInterface;
 use App\Models\Status;
 use App\Repositories\AddressRepository;
+use App\Repositories\CartRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\CommentRepository;
 use App\Repositories\CouponRepository;
@@ -37,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserCouponInterface::class,UserCouponRepository::class);
         $this->app->bind(PaymentMethodInterface::class,PaymentMedthodRepository::class);
         $this->app->bind(CommentInterface::class,CommentRepository::class);
+        $this->app->bind(CartInterface::class,CartRepository::class);
     }
 
     /**

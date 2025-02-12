@@ -63,7 +63,7 @@ class Product extends Model
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function cart(): HasMany{
-        return $this->hasMany(Comment::class);
+        return $this->hasMany(Cart::class);
     }
 
     /**

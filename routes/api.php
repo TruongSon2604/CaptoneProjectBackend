@@ -4,6 +4,7 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CouponController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DiscountController;
@@ -98,6 +99,15 @@ Route::group([
         Route::delete('/comment/{id}', [CommentController::class, 'destroy']);
         Route::post('/UserDeleteComment', [CommentController::class, 'UserDeleteComment']);
         Route::post('/UserUpdateComment', [CommentController::class, 'UserUpdateComment']);
+
+        //Cart
+        Route::get('/getCartItem',[CartController::class,'getCartItem']);
+        Route::post('/addToCart', [CartController::class, 'addToCart']);
+        Route::get('/calculateTotal', [CartController::class, 'calculateTotal']);
+        Route::post('/removeFromCart', [CartController::class, 'removeFromCart']);
+        Route::post('/addMultipleToCart', [CartController::class, 'addMultipleToCart']);
+
+        
     });
 
 });
