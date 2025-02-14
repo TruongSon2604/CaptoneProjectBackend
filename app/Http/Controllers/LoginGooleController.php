@@ -33,7 +33,8 @@ class LoginGooleController extends Controller
             );
 
             $token = Auth::login($user);
-            return $this->createNewToken($token);
+            return redirect()->to("http://localhost:5173/auth/callback?access_token=$token&user=" . urlencode(json_encode($user)));
+            // return $this->createNewToken($token);
 
         } catch (\Exception $e) {
             return response()->json(['error' => 'Đăng nhập Google thất bại'], 500);

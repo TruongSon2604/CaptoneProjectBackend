@@ -10,11 +10,13 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\LoginGooleController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\UserCouponController;
 use App\Http\Controllers\ZaloPayController;
+use App\Http\Controllers\ZaloPayOrderController;
 
 Route::group([
     'middleware' => 'api',
@@ -110,6 +112,9 @@ Route::group([
 
         //Order
         Route::post('/createOrder',[OrderController::class,'createOrder']);
+
+        //Payment
+        Route::post("/UpdatePaymentOrder",[PaymentController::class,'UpdatePaymentOrder']);
     });
 
 });
@@ -117,3 +122,10 @@ Route::group([
 Route::post('/payment', [ZaloPayController::class, 'payment']);
 Route::post('/payment/callback', [ZaloPayController::class, 'callback']);
 Route::get('/payment/status/{iddh}', [ZaloPayController::class, 'get_status']);
+
+
+Route::post('/payment2', [ZaloPayOrderController::class, 'payment']);
+Route::get('/payment2/status/{iddh}', [ZaloPayOrderController::class, 'get_status']);
+Route::post('/payment/callback', [ZaloPayOrderController::class, 'paymentCallback']);
+
+// Route::post('/checkOrderPayment', [PaymentController::class, 'checkOrderPayment']);

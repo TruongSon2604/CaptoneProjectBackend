@@ -52,7 +52,7 @@ class OrderService
             ];
 
             $order = $this->orderRepository->create($dataOrder);
-
+            // dd($order);
             try
             {
                 foreach ($cartItems as $item) {
@@ -73,11 +73,13 @@ class OrderService
                 dd($e->getMessage());
             }
             DB::commit();
-            return $order->with('address')->first();
+            return $order->load('address');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error($e->getMessage());
             return false;
         }
     }
+
+
 }
