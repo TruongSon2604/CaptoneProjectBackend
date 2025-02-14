@@ -49,7 +49,7 @@ class AddressController extends Controller
     {
         try {
             $addresses = $this->addressService->create($request->validated());
-
+            // dd($request->validated());
             return response()->json([
                 'status' => true,
                 'message' => 'Address created successfully',

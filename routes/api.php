@@ -9,6 +9,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\LoginGooleController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StatusController;
@@ -107,7 +108,8 @@ Route::group([
         Route::post('/removeFromCart', [CartController::class, 'removeFromCart']);
         Route::post('/addMultipleToCart', [CartController::class, 'addMultipleToCart']);
 
-        
+        //Order
+        Route::post('/createOrder',[OrderController::class,'createOrder']);
     });
 
 });

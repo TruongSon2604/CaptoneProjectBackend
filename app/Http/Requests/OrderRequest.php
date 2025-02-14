@@ -2,12 +2,13 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\QuantityInStock;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
-class AddressRequest extends FormRequest
+class OrderRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,12 +26,17 @@ class AddressRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // 'user_id' => 'nullable|integer|exists:users,id',
-            'district' => 'required|string|max:255',
-            'provice' => 'required|string|max:255',
-            'ward' => 'required|string|max:255',
-            'address_detail' => 'required|string|max:255',
-            'phone' => 'required|string|max:10',
+            'address_id' => 'required|integer|exists:addresses,id',
+            'coupon_id' => 'nullable|integer|exists:coupons,id',
+            'cartItems' => 'required|array',
+            'cartItems.*.product_id' => 'required|integer|exists:products,id',
+            'cartItems.*.quantity' => [
+                'required',
+                'integer',
+                'min:1',
+                'max:100',
+                new QuantityInStock(),  // Áp dụng custom rule
+            ],
         ];
     }
 

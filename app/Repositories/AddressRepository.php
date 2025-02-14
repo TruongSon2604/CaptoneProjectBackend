@@ -17,7 +17,14 @@ class AddressRepository extends BaseRepository implements AddressInterface
 
     public function create(array $data): Address
     {
-        return Address::create($data);
+        return Address::create([
+            'phone'=>$data['phone'],
+            'ward'=>$data['ward'],
+            'user_id'=>Auth::id(),
+            'address_detail'=>$data['address_detail'],
+            'provice'=>$data['provice'],
+            'district'=>$data['district'],
+        ]);
     }
 
     public function update(array $data, int $id): Address

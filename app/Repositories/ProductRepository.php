@@ -126,4 +126,19 @@ class ProductRepository extends BaseRepository implements ProductInterface
     {
         return $this->getModel()::with('discount')->get();
     }
+
+    public function getTotalAmountOrder(array $data):mixed
+    {
+        $totalAmount = 0;
+
+        foreach ($data as $item)
+        {
+            $product= $this->model::findOrFail($item['product_id']);
+            if ($product->stock_quantity < $item['quantity']) {
+                return response()->json(['message' => 'Product ' . $product->name . ' is out of stock.'], 400);
+            }
+            $totalAmount+=$product->discounted_price * $item['quantity'];
+        }
+        return $totalAmount;
+    }
 }

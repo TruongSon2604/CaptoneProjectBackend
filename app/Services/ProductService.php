@@ -96,4 +96,9 @@ class ProductService
         $products = $this->productRepository->getProducts();
         return $products;
     }
+
+    public function getTotalAmountOrder(array $data):mixed
+    {
+        return $this->productRepository->getTotalAmountOrder($data);
+    }
 }

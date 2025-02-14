@@ -7,6 +7,7 @@ use App\Contracts\CartInterface;
 use App\Contracts\CategoryInterface;
 use App\Contracts\CommentInterface;
 use App\Contracts\CouponInterface;
+use App\Contracts\OrderInterface;
 use App\Contracts\PaymentMethodInterface;
 use App\Contracts\ProductInterface;
 use App\Contracts\StatusInterface;
@@ -17,6 +18,7 @@ use App\Repositories\CartRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\CommentRepository;
 use App\Repositories\CouponRepository;
+use App\Repositories\OrderRepository;
 use App\Repositories\PaymentMedthodRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\StatusRepository;
@@ -40,6 +42,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PaymentMethodInterface::class,PaymentMedthodRepository::class);
         $this->app->bind(CommentInterface::class,CommentRepository::class);
         $this->app->bind(CartInterface::class,CartRepository::class);
+        $this->app->bind(OrderInterface::class,OrderRepository::class);
     }
 
     /**
