@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Status;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class ZaloPayService
@@ -20,27 +22,30 @@ class ZaloPayService
             "endpoint" => "https://sb-openapi.zalopay.vn/v2/create"
         ];
 
-        $embeddata = '{}';
-
-        $items = json_encode([
-            ["item_id" => "P001", "item_name" => "Trà sữa", "item_price" => 50000, "quantity" => 1],
-            ["item_id" => "P002", "item_name" => "Cà phê", "item_price" => 50000, "quantity" => 1]
+        // $embeddata = '{}';
+        $embeddata = json_encode([
+            "address_id" => $dataInput['address_id'],
+            "coupon_id" => $dataInput['coupon_id'],
+            "user_id" => Auth::id(),
         ]);
 
-        $userId = $dataInput['user_id'];
+        $items = json_encode($dataInput['cartItems']);
+
+        // $userId = $dataInput['user_id'];
+        $userId = Auth::id();
         // $transID = $dataInput['transaction_id'];
         $total_amount = $dataInput['total_amount'];
         $order = [
             "app_id" => $config["app_id"],
             "app_time" => round(microtime(true) * 1000), // miliseconds
-            "app_trans_id" => date("ymd") . "_" . $dataInput['order_number'], // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
+            "app_trans_id" => date("ymd_Hi") . "_" . mt_rand(100, 999), // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
             "app_user" => $userId,
             "item" => $items,
             "embed_data" => $embeddata,
             "amount" => $total_amount,
-            "description" => "Payment for the order #{$dataInput['order_number']} of Userid #$userId",
+            "description" => "Payment for the order of Userid #$userId",
             "bank_code" => "zalopayapp",
-            "callback_url" => "https://8d1b-14-191-112-76.ngrok-free.app/api/payment2/callback"
+            "callback_url" => "https://86d9-14-191-112-76.ngrok-free.app/api/payment2/callback"
         ];
 
         $data = $order["app_id"] . "|" . $order["app_trans_id"] . "|" . $order["app_user"] . "|" . $order["amount"]
@@ -131,18 +136,25 @@ class ZaloPayService
         //     return response()->json(["return_code" => -1, "return_message" => "Invalid response from ZaloPay"], 400);
         // }
         $items = json_decode($data['item'] ?? '[]', true);
-        Log::info("Parsed Items", $items);
+        $embedData = json_decode($data['embed_data'], true);
+        // Log::info("Parsed Items", $items);
 
-        // Duyệt danh sách sản phẩm để xử lý
-        foreach ($items as $item) {
-            Log::info("Product ID: " . $item['item_id']);
-            Log::info("Product Name: " . $item['item_name']);
-            Log::info("Price: " . $item['item_price']);
-            Log::info("Quantity: " . $item['quantity']);
-        }
-
+        $parsedData = [
+            "address_id" => $embedData['address_id'] ?? null,
+            "coupon_id" => $embedData['coupon_id'] ?? null,
+            "user_id" => $embedData['user_id'] ?? 1,
+            "cartItems" => $items,
+            "transaction_id" => $app_trans_id
+            // "order_number" => $app_trans_id,
+        ];
+        Log::info("parsedData", $parsedData);
         if ($status == 1) {
-            Log::info("ZaloPay Payment Success: Transaction ID: $zp_trans_id, Amount: $amount");
+            $status1 = Status::create([
+                'name' => 'Đã thanh toán',
+            ]);
+            $orderZalo = $this->orderService->createOrderZalo($parsedData);
+            Log::info("ZaloPay Payment Success: Transaction {$orderZalo} {$status1}");
+
         } else {
             Log::warning("ZaloPay Payment Failed: Transaction ID: $zp_trans_id, Amount: $amount");
         }

@@ -10,17 +10,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Order extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'user_id',
-        'order_number',
-        'total_amount',
-        'discount_amount',
-        'final_amount',
-        'status',
-        'shipping_fee',
-        'address_id',
-        'coupon_id'
-    ];
+    // protected $fillable = [
+    //     'user_id',
+    //     'order_number',
+    //     'total_amount',
+    //     'discount_amount',
+    //     'final_amount',
+    //     'status',
+    //     'shipping_fee',
+    //     'address_id',
+    //     'coupon_id'
+    // ];
+    protected $guarded = [];
 
     public function user(): BelongsTo
     {

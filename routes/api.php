@@ -116,16 +116,11 @@ Route::group([
 
         //Payment
         Route::post("/UpdatePaymentOrder",[PaymentController::class,'UpdatePaymentOrder']);
+        //order_zalopay
+        Route::post('/payment2', [ZaloPayOrderController::class, 'payment']);
     });
 
 });
 
-Route::post('/payment', [ZaloPayController::class, 'payment']);
-Route::post('/payment/callback', [ZaloPayController::class, 'callback']);
-Route::get('/payment/status/{iddh}', [ZaloPayController::class, 'get_status']);
-
-
-Route::post('/payment2', [ZaloPayOrderController::class, 'payment']);
-Route::get('/payment2/status/{iddh}', [ZaloPayOrderController::class, 'get_status']);
 Route::post('/payment2/callback', [ZaloPayOrderController::class, 'paymentCallback']);
-
+Route::get('/payment2/status/{iddh}', [ZaloPayOrderController::class, 'get_status']);

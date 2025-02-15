@@ -34,7 +34,6 @@ class ZaloPayOrderController extends Controller
 
     public function paymentCallback(Request $request)
     {
-        Log::info("Test log is working!");
         return $this->zaloPayService->paymentCallback($request);
     }
 }

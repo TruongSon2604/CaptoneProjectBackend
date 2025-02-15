@@ -18,15 +18,17 @@ class OrderRepository extends BaseRepository implements OrderInterface
     {
         try {
             $order = $this->model::create([
-                'user_id' => Auth::id(),
+                'user_id' => $data['user_id'],
                 'order_number' => $data['order_number'],
                 'total_amount' => $data['total_amount'],
                 'discount_amount' => $data['discount_amount'],
                 'final_amount' => $data['final_amount'],
-                'status' => $data['status'],
+                'status' => 'pending',
+                'status_payment' => 'paid',
                 'shipping_fee' => $data['shipping_fee'],
                 'address_id' => $data['address_id'],
-                'coupon_id' => $data['coupon_id']
+                'coupon_id' => $data['coupon_id'],
+                'transaction_id'=> $data['transaction_id'],
             ]);
             return $order;
         } catch (\Exception $e) {
