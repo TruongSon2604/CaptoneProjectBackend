@@ -28,19 +28,19 @@ class ZaloPayService
         ]);
 
         $userId = $dataInput['user_id'];
-        $transID = $dataInput['transaction_id'];
+        // $transID = $dataInput['transaction_id'];
         $total_amount = $dataInput['total_amount'];
         $order = [
             "app_id" => $config["app_id"],
             "app_time" => round(microtime(true) * 1000), // miliseconds
-            "app_trans_id" => date("ymd") . "_" . $dataInput['order_number'] . "_" . $transID, // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
+            "app_trans_id" => date("ymd") . "_" . $dataInput['order_number'], // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
             "app_user" => $userId,
             "item" => $items,
             "embed_data" => $embeddata,
             "amount" => $total_amount,
-            "description" => "Payment for the order #$transID of Userid #$userId",
+            "description" => "Payment for the order #{$dataInput['order_number']} of Userid #$userId",
             "bank_code" => "zalopayapp",
-            "callback_url" => "https://4b25-14-191-112-76.ngrok-free.app/api/payment/callback"
+            "callback_url" => "https://8d1b-14-191-112-76.ngrok-free.app/api/payment2/callback"
         ];
 
         $data = $order["app_id"] . "|" . $order["app_trans_id"] . "|" . $order["app_user"] . "|" . $order["amount"]
@@ -103,6 +103,7 @@ class ZaloPayService
 
     public function paymentCallback(Request $request)
     {
+        Log::info("Request toàn bộ dữ liệu:", $request->all());
         $config = [
             "key2" => "trMrHtvjo6myautxDUiAcYsVtaeQ8nhf", // key2 dùng để verify callback
         ];

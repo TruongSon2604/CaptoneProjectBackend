@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ZaloPayRequest;
 use App\Services\ZaloPayService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ZaloPayOrderController extends Controller
 {
@@ -33,6 +34,7 @@ class ZaloPayOrderController extends Controller
 
     public function paymentCallback(Request $request)
     {
+        Log::info("Test log is working!");
         return $this->zaloPayService->paymentCallback($request);
     }
 }

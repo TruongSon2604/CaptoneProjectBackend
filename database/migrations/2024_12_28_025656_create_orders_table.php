@@ -23,6 +23,8 @@ return new class extends Migration {
                 $table->enum('status', ['pending', 'in_progress', 'completed', 'canceled'])->default('pending');
                 $table->decimal('total_amount', 10, 2);  // Tổng số tiền
                 $table->decimal('shipping_fee', 10, 2);  // Phí vận chuyển
+                $table->string('transaction_id')->nullable();
+                $table->enum('status_payment', ['pending', 'paid', 'failed'])->default('pending');
                 // $table->dateTime('assigned_shipped_at')->nullable();  // Thời gian shipper nhận đơn
                 // $table->dateTime('delivered_at')->nullable();  // Thời gian giao hàng
                 $table->timestamps();

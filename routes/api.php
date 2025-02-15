@@ -17,6 +17,7 @@ use App\Http\Controllers\StatusController;
 use App\Http\Controllers\UserCouponController;
 use App\Http\Controllers\ZaloPayController;
 use App\Http\Controllers\ZaloPayOrderController;
+use Illuminate\Support\Facades\Log;
 
 Route::group([
     'middleware' => 'api',
@@ -126,6 +127,5 @@ Route::get('/payment/status/{iddh}', [ZaloPayController::class, 'get_status']);
 
 Route::post('/payment2', [ZaloPayOrderController::class, 'payment']);
 Route::get('/payment2/status/{iddh}', [ZaloPayOrderController::class, 'get_status']);
-Route::post('/payment/callback', [ZaloPayOrderController::class, 'paymentCallback']);
+Route::post('/payment2/callback', [ZaloPayOrderController::class, 'paymentCallback']);
 
-// Route::post('/checkOrderPayment', [PaymentController::class, 'checkOrderPayment']);

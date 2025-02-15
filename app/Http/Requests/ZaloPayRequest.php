@@ -25,7 +25,7 @@ class ZaloPayRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'transaction_id' => 'required|string|exists:orders,id',
+            // 'transaction_id' => 'required|string|exists:orders,id',
             'user_id' => 'required|exists:users,id',
             'total_amount' => 'required',
             'order_number' => 'required'
