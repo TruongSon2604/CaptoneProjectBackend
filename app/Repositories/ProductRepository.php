@@ -3,7 +3,9 @@
 namespace App\Repositories;
 
 use App\Contracts\ProductInterface;
+use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ProductRepository extends BaseRepository implements ProductInterface
@@ -93,7 +95,34 @@ class ProductRepository extends BaseRepository implements ProductInterface
      */
     public function getAllWithPagination(): mixed
     {
-        return $this->getModel()::paginate(Product::ITEM_PER_PAGE);
+        // $product= $this->model::find(5);
+        // return $product->category;
+        // $category = Category::find(4);
+        // return $category->products()->where('price','<','49000')->paginate(3);
+
+        // return Category::with('products')->find(5);
+
+        // return Category::with(['products'=>function($query)
+        // {
+        //     $query->where('price','>',47661);
+        // }])->find(5);
+
+        // return $this->getModel()::find(5)->category->paginate(3);
+        $products = DB::table('products')
+            ->leftJoin('discounts', 'products.id', '=', 'discounts.product_id')
+            ->selectRaw('
+            products.id,
+            products.name,
+            products.stock_quantity,
+            products.image,
+            products.description,
+            products.price as original_price,
+            COALESCE(discounts.percent_discount, 0) as discount_percent,
+            ROUND(products.price * (1 - COALESCE(discounts.percent_discount, 0) / 100), 2) as discounted_price
+        ')
+            ->paginate(Product::ITEM_PER_PAGE);
+
+        return $products;
     }
 
     /**
@@ -124,21 +153,43 @@ class ProductRepository extends BaseRepository implements ProductInterface
      */
     public function getProducts(): mixed
     {
+        // $product = $this->getModel()::find(5);
+        // dd($product->discount);
+        // return $product->discount;
         return $this->getModel()::with('discount')->get();
     }
 
-    public function getTotalAmountOrder(array $data):mixed
+    public function getTotalAmountOrder(array $data): mixed
     {
         $totalAmount = 0;
 
-        foreach ($data as $item)
-        {
-            $product= $this->model::findOrFail($item['product_id']);
+        foreach ($data as $item) {
+            $product = $this->model::findOrFail($item['product_id']);
             if ($product->stock_quantity < $item['quantity']) {
-                return response()->json(['message' => 'Product ' . $product->name . ' is out of stock.'], 400);
+                return response()->json(data: ['message' => 'Product ' . $product->name . ' is out of stock.']);
             }
-            $totalAmount+=$product->discounted_price * $item['quantity'];
+            $totalAmount += $product->discounted_price * $item['quantity'];
         }
         return $totalAmount;
+    }
+
+    public function getProductByid(int $id): mixed
+    {
+        $products = DB::table('products')
+            ->leftJoin('discounts', 'products.id', '=', 'discounts.product_id')
+            ->selectRaw('
+            products.id,
+            products.name,
+            products.stock_quantity,
+            products.image,
+            products.description,
+            products.price as original_price,
+            COALESCE(discounts.percent_discount, 0) as discount_percent,
+            ROUND(products.price * (1 - COALESCE(discounts.percent_discount, 0) / 100), 2) as discounted_price
+        ')
+            ->where('products.id', $id)
+            ->get();
+        // $product = $this->model::find($id);
+        return $products;
     }
 }

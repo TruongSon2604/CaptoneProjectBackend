@@ -88,4 +88,9 @@ class CategoryService
     {
         return $this->categoryRepository->getAllWithPagination();
     }
+
+    public function getProductByCategory($id)
+    {
+        return $this->categoryRepository->getProductByCategory($id);
+    }
 }

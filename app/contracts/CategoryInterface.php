@@ -29,4 +29,6 @@ interface CategoryInterface extends BaseInterface
      */
     public function getAllWithPagination();
 
+    public function getProductByCategory($id);
+
 }

@@ -103,4 +103,20 @@ class CategoryRepository extends BaseRepository implements CategoryInterface
         $category->delete();
         return true;
     }
+
+    public function getProductByCategory($id)
+    {
+        $category= $this->model::find($id);
+        return $category->products()->paginate(Category::ITEM_PER_PAGE);
+
+        // $c2= Category::with(['products'=> function($query)
+        // {
+        //     $query->where('price','>',48500);
+        // }])->find($id);
+        // return $c2;
+
+        // $category = Category::find(4);
+        // $products = $category->products()->where('price', '>', 48500)->paginate(2);
+        // return ['category' => $category, 'products' => $products];
+    }
 }

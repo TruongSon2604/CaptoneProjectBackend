@@ -52,7 +52,7 @@ class OrderService
                 'shipping_fee' => 10000.00,
             ];
 
-            $order = $this->orderRepository->create($dataOrder);
+            $order = $this->orderRepository->createOrder($dataOrder);
             Log::info('Create order zalo4 ' . $order);
             // dd($order);
             try

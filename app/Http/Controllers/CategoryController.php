@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CategoryController extends Controller
 {
@@ -153,4 +154,25 @@ class CategoryController extends Controller
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function getProductByCategory(Request $request): JsonResponse
+    {
+        try {
+            $id = $request->id;
+            $products = $this->categoryService->getProductByCategory($id);
+            return response()->json([
+                'status' => true,
+                'data' => $products,
+                'message' => "Get Product by Category Successful"
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json([
+                'status' => false,
+                'message' => 'An error occurred: ' . $e->getMessage()
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

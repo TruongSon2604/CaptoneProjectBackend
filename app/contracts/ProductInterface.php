@@ -27,4 +27,6 @@ interface ProductInterface extends BaseInterface {
      * @return mixed
      */
     public function getAllWithPagination();
+
+    public function getProductByid(int $id);
 }

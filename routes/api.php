@@ -47,13 +47,23 @@ Route::group([
     //product
     Route::get('/product', [ProductController::class, 'index']);
     Route::get('/product/{product}', [ProductController::class, 'show']);
+    Route::get('/getProductByid/{id}', [ProductController::class, 'getProductByid']);
     //discount
     Route::get('/discount', [DiscountController::class, 'index']);
     Route::get('/discount/{discount}', [DiscountController::class, 'show']);
+    //category
+    Route::get('/categories', [CategoryController::class, 'index']);
+    Route::get('/categories/{categories}', [CategoryController::class, 'show']);
+    Route::post('/getProductByCategory', [CategoryController::class, 'getProductByCategory']);
 
     Route::middleware('auth:api')->group(function () {
-        Route::apiResource('categories', CategoryController::class)->except(['update'])->middleware('auth:api');
-        Route::post('categories/{category}', [CategoryController::class, 'update']);
+        // Route::apiResource('categories', CategoryController::class)->except(['update'])->middleware('auth:api');
+        // Route::post('categories/{category}', [CategoryController::class, 'update']);
+
+        //category
+        Route::post('categories/{categories}', [CategoryController::class, 'update']);
+        Route::post('/categories', [CategoryController::class, 'store']);
+        Route::delete('/categories/{categories}', [CategoryController::class, 'destroy']);
 
         //Status
         Route::apiResource('status', StatusController::class)->except(['update']);

@@ -101,4 +101,8 @@ class ProductService
     {
         return $this->productRepository->getTotalAmountOrder($data);
     }
+    public function getProductByid(int $id): mixed
+    {
+        return $this->productRepository->getProductByid($id);
+    }
 }

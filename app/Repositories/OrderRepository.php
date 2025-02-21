@@ -13,6 +13,25 @@ class OrderRepository extends BaseRepository implements OrderInterface
     {
         return Order::class;
     }
+    public function createOrder(array $data)
+    {
+        try {
+            $order = $this->model::create([
+                'user_id' => $data['user_id'],
+                'address_id' => $data['address_id'],
+                'coupon_id' => $data['coupon_id'],
+                'order_number' => 'ORD-' . strtoupper(uniqid()),
+                'total_amount' => $data['total_amount'],
+                'discount_amount' => $data['discount_amount'],
+                'final_amount' => $data['final_amount'],
+                'status' => 'pending',
+                'shipping_fee' => 10000.00,
+            ]);
+            return $order;
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+        }
+    }
 
     public function create(array $data)
     {
