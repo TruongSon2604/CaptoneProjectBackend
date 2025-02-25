@@ -48,6 +48,7 @@ Route::group([
     Route::get('/product', [ProductController::class, 'index']);
     Route::get('/product/{product}', [ProductController::class, 'show']);
     Route::get('/getProductByid/{id}', [ProductController::class, 'getProductByid']);
+    Route::get('/getProductLimit', [ProductController::class, 'getProductLimit']);
     //discount
     Route::get('/discount', [DiscountController::class, 'index']);
     Route::get('/discount/{discount}', [DiscountController::class, 'show']);
@@ -97,6 +98,7 @@ Route::group([
         Route::get('/user-coupon',[UserCouponController::class,'index']);
         Route::post('/user-coupon', [UserCouponController::class, 'store']);
         Route::post('/delUserCoupon',[UserCouponController::class,'deleteUserCoupon']);
+        Route::get('/getUserWithCoupon',[UserCouponController::class,'getUserWithCoupon']);
 
         //Payment method
         Route::post('/payment-method/{id}',[PaymentMethodController::class,'update']);
@@ -120,6 +122,9 @@ Route::group([
         Route::get('/calculateTotal', [CartController::class, 'calculateTotal']);
         Route::post('/removeFromCart', [CartController::class, 'removeFromCart']);
         Route::post('/addMultipleToCart', [CartController::class, 'addMultipleToCart']);
+        Route::post('/updateQuantityCart', [CartController::class, 'updateQuantityCart']);
+        Route::post('/deleteMoreItemFromCart', [CartController::class, 'deleteMoreItemFromCart']);
+        Route::post('/getProductByListId', [CartController::class, 'getProductByListId']);
 
         //Order
         Route::post('/createOrder',[OrderController::class,'createOrder']);

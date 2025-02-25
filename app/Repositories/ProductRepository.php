@@ -192,4 +192,30 @@ class ProductRepository extends BaseRepository implements ProductInterface
         // $product = $this->model::find($id);
         return $products;
     }
+
+    public function getProductLimit()
+    {
+        $products = DB::table('products')
+            ->leftJoin('discounts', 'products.id', '=', 'discounts.product_id')
+            ->selectRaw('
+            products.id,
+            products.name,
+            products.stock_quantity,
+            products.image,
+            products.description,
+            products.price as original_price,
+            COALESCE(discounts.percent_discount, 0) as discount_percent,
+            ROUND(products.price * (1 - COALESCE(discounts.percent_discount, 0) / 100), 2) as discounted_price
+        ')
+            ->limit(5)
+            ->get();
+        // $product = $this->model::find($id);
+        return $products;
+    }
+
+    public function getProductByListId(array $data)
+    {
+        $products= $this->model::whereIn('id', $data['products_id'])->get();
+        return $products;
+    }
 }

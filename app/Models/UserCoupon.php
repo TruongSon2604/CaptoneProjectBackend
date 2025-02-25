@@ -12,4 +12,9 @@ class UserCoupon extends Model
     use HasFactory;
     const ITEM_PER_PAGE=5;
     protected $guarded = [];
+
+    public function coupon()
+    {
+        return $this->belongsTo(Coupon::class,'coupon_id','id');
+    }
 }

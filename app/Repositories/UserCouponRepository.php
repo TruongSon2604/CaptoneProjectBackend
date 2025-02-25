@@ -52,4 +52,13 @@ class UserCouponRepository extends BaseRepository implements UserCouponInterface
         $data->delete();
         return $data;
     }
+
+    public function getUserWithCoupon()
+    {
+        $data = $this->getModel()::with('coupon')
+            ->where('user_id', Auth::id())
+            ->whereNull('applied_at')
+            ->get();
+        return $data;
+    }
 }

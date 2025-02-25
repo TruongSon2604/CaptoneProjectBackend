@@ -23,6 +23,7 @@ class CartController extends Controller
     {
         $cartItem = $this->cartService->getCartItem();
 
+
         return response()->json([
             'status' => true,
             'data' => $cartItem,
@@ -119,8 +120,77 @@ class CartController extends Controller
     {
         $addMultipleToCartRequest = $this->cartService->addMultipleToCart($addMultipleToCartRequest->validated());
         return response()->json([
-            'status'=>true,
-            'message'=>'Add Multiple to cart successfull'
+            'status' => true,
+            'message' => 'Add Multiple to cart successfull'
         ]);
+    }
+
+    public function updateQuantityCart(Request $request)
+    {
+        try {
+            $item = $this->cartService->updateQuantityCart($request->all());
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Update Cart successfully',
+                'data' => $item
+            ], JsonResponse::HTTP_CREATED);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json([
+                'status' => false,
+                'message' => 'An error occurred: ' . $e->getMessage()
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function deleteMoreItemFromCart(Request $request)
+    {
+
+        try {
+            Log::info($request->all());
+            $deletedItems = $this->cartService->deleteMoreItemFromCart($request->all());
+            if (count($deletedItems) > 0) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Items deleted successfully.',
+                    'data' => $deletedItems
+                ], 200);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No items found to delete.'
+                ], JsonResponse::HTTP_NOT_FOUND);
+            }
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json([
+                'status' => false,
+                'message' => 'An error occurred: ' . $e->getMessage()
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function getProductByListId(Request $request)
+    {
+        try {
+            Log::info("getProductByListId",$request->all());
+            $item = $this->cartService->getProductByListId($request->all());
+
+            return response()->json([
+                'status' => true,
+                'message' => 'getProductByListId  successfully',
+                'data' => $item
+            ], JsonResponse::HTTP_OK);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json([
+                'status' => false,
+                'message' => 'An error occurred: ' . $e->getMessage()
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }

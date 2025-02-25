@@ -41,7 +41,8 @@ class CouponRepository extends BaseRepository implements CouponInterface
             $now = Carbon::now();
 
             if (!$coupon || $coupon->is_active != 1 || $now->lt($couponEndDate)) {
-                return response()->json(data: ['message' => 'Invalid or expired coupon code.']);
+                // return response()->json(data: ['message' => 'Invalid or expired coupon code.']);
+                return 0;
             }
             if ($coupon->discount_type === 'percentage') {
                 $discountAmount = ($totalAmount * $coupon->discount_value) / 100;

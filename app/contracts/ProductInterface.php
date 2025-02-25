@@ -29,4 +29,8 @@ interface ProductInterface extends BaseInterface {
     public function getAllWithPagination();
 
     public function getProductByid(int $id);
+
+    public function getProductLimit();
+
+    public function getProductByListId(array $data);
 }

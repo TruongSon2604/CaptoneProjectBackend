@@ -183,4 +183,30 @@ class UserCouponController extends Controller
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function getUserWithCoupon()
+    {
+        try {
+            $data = $this->userCouponService->getUserWithCoupon();
+            if(!$data)
+            {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'You have already applied this coupon.',
+                ]);
+            }
+            return response()->json([
+                'status' => true,
+                'message' => 'Get user coupons successfully',
+                'data' => $data
+            ], JsonResponse::HTTP_CREATED);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json([
+                'status' => false,
+                'message' => 'An error occurred: ' . $e->getMessage()
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

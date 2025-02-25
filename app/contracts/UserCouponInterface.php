@@ -31,4 +31,6 @@ interface UserCouponInterface extends BaseInterface
 
     public function deleteUserCoupon(array $data);
 
+    public function getUserWithCoupon();
+
 }

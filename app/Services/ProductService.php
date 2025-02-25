@@ -105,4 +105,14 @@ class ProductService
     {
         return $this->productRepository->getProductByid($id);
     }
+
+    public function getProductLimit()
+    {
+        return $this->productRepository->getProductLimit();
+    }
+
+    public function getProductByListId(array $data)
+    {
+        return $this->productRepository->getProductByListId($data);
+    }
 }

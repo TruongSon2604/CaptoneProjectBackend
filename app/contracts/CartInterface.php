@@ -15,4 +15,10 @@ interface CartInterface extends BaseInterface
     public function getCartItem();
 
     public function addMultipleToCart(array $data);
+
+    public function updateQuantityCart(array $data);
+
+    public function deleteMoreItemFromCart(array $data);
+
+    public function getProductByListId(array $data);
 }

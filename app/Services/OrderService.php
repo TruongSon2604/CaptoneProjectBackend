@@ -4,10 +4,13 @@ namespace App\Services;
 
 use App\Models\OrderDetail;
 use App\Models\Product;
+use App\Models\UserCoupon;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -55,8 +58,7 @@ class OrderService
             $order = $this->orderRepository->createOrder($dataOrder);
             Log::info('Create order zalo4 ' . $order);
             // dd($order);
-            try
-            {
+            try {
                 foreach ($cartItems as $item) {
                     $product = Product::findOrFail($item['product_id']);
                     OrderDetail::create([
@@ -69,12 +71,13 @@ class OrderService
                     $product->stock_quantity -= $item['quantity'];
                     $product->save();
                 }
-            }
-            catch(Exception $e)
-            {
+            } catch (Exception $e) {
                 Log::info('catch');
                 dd($e->getMessage());
             }
+            $updateCouponUser = UserCoupon::where('user_id', Auth::id())
+                ->where('coupon_id', $coupon_id)
+                ->update(['applied_at' => Carbon::now()]);
             Log::info('commit');
             DB::commit();
 
@@ -117,14 +120,13 @@ class OrderService
                 'final_amount' => $finalAmount,
                 'status' => 'pending',
                 'status_payment' => 'paid',
-                'transaction_id'=> $data['transaction_id'],
+                'transaction_id' => $data['transaction_id'],
                 'shipping_fee' => 10000.00,
             ];
             $order = $this->orderRepository->create($dataOrder);
             Log::info('Create order zalo4 ' . $order);
             // dd($order);
-            try
-            {
+            try {
                 foreach ($cartItems as $item) {
                     $product = Product::findOrFail($item['product_id']);
                     OrderDetail::create([
@@ -137,9 +139,7 @@ class OrderService
                     $product->stock_quantity -= $item['quantity'];
                     $product->save();
                 }
-            }
-            catch(Exception $e)
-            {
+            } catch (Exception $e) {
                 Log::info('catch');
                 dd($e->getMessage());
             }

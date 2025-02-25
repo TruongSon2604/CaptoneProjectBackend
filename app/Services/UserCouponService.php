@@ -87,4 +87,9 @@ class UserCouponService
     {
         return $this->userCouponRepository->getAllWithPagination();
     }
+
+    public function getUserWithCoupon()
+    {
+        return $this->userCouponRepository->getUserWithCoupon();
+    }
 }

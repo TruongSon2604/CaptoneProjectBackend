@@ -189,4 +189,27 @@ class ProductController extends Controller
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
      }
+
+     public function getProductLimit()
+     {
+        try {
+            $product = $this->productService->getProductLimit();
+            if (!$product) {
+                throw new \Exception("Product not found");
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Get Product Limit 5 successfully',
+                'data' => $product
+            ], JsonResponse::HTTP_OK);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'An error occurred: ' . $e->getMessage()
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+     }
 }

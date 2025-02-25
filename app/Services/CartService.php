@@ -39,4 +39,19 @@ class CartService {
     {
         $this->cartRepository->addMultipleToCart($data);
     }
+
+    public function updateQuantityCart(array $data)
+    {
+        return $this->cartRepository->updateQuantityCart($data);
+    }
+
+    public function deleteMoreItemFromCart(array $data)
+    {
+        return $this->cartRepository->deleteMoreItemFromCart($data);
+    }
+
+    public function getProductByListId(array $data)
+    {
+        return $this->cartRepository->getProductByListId($data);
+    }
 }
