@@ -175,4 +175,20 @@ class CategoryController extends Controller
         }
     }
 
+    public function deleteMoreCategory(Request $request)
+    {
+        $ids = $request->input('ids'); // Lấy danh sách ID từ request
+
+        if (!$ids || !is_array($ids)) {
+            return response()->json(['message' => 'Invalid request data'], 400);
+        }
+
+        $deleted = $this->categoryService->deleteMoreCategory($ids);
+
+        if ($deleted) {
+            return response()->json(['message' => 'Deleted successfully'], 200);
+        }
+
+        return response()->json(['message' => 'Category not found'], 404);
+    }
 }

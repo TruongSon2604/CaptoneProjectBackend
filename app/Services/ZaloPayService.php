@@ -25,7 +25,7 @@ class ZaloPayService
         // $embeddata = '{}';
         $embeddata = json_encode([
             "address_id" => $dataInput['address_id'],
-            "coupon_id" => $dataInput['coupon_id'],
+            "coupon_id" => $dataInput['coupon_id'] ?? null,
             "user_id" => Auth::id(),
         ]);
 
@@ -34,7 +34,8 @@ class ZaloPayService
         // $userId = $dataInput['user_id'];
         $userId = Auth::id();
         // $transID = $dataInput['transaction_id'];
-        $total_amount = $dataInput['total_amount'];
+        $total_amount = $this->orderService->getFinalAmount($dataInput);
+        // $total_amount = $dataInput['total_amount'];
         $order = [
             "app_id" => $config["app_id"],
             "app_time" => round(microtime(true) * 1000), // miliseconds
@@ -45,7 +46,7 @@ class ZaloPayService
             "amount" => $total_amount,
             "description" => "Payment for the order of Userid #$userId",
             "bank_code" => "zalopayapp",
-            "callback_url" => "https://aed1-14-191-112-76.ngrok-free.app/api/payment2/callback"
+            "callback_url" => "https://04eb-14-191-113-149.ngrok-free.app/api/payment2/callback"
         ];
 
         $data = $order["app_id"] . "|" . $order["app_trans_id"] . "|" . $order["app_user"] . "|" . $order["amount"]
@@ -65,7 +66,8 @@ class ZaloPayService
 
         return [
             "status" => true,
-            "result" => $result
+            "result" => $result,
+            "app_trans_id" => $order["app_trans_id"]
         ];
     }
 
@@ -129,23 +131,16 @@ class ZaloPayService
         $app_trans_id = $data["app_trans_id"] ?? null;
         $zp_trans_id = $data["zp_trans_id"] ?? null;
         $amount = $data["amount"] ?? 0;
-        $status = $data["return_code"] ?? 1; // kiểm tra nếu không có return_code thì gán null
-
-        // if ($status === null) {
-        //     Log::error("ZaloPay Callback Error: Missing return_code", $data);
-        //     return response()->json(["return_code" => -1, "return_message" => "Invalid response from ZaloPay"], 400);
-        // }
+        $status = $data["return_code"] ?? 1;
         $items = json_decode($data['item'] ?? '[]', true);
         $embedData = json_decode($data['embed_data'], true);
-        // Log::info("Parsed Items", $items);
 
         $parsedData = [
             "address_id" => $embedData['address_id'] ?? null,
             "coupon_id" => $embedData['coupon_id'] ?? null,
-            "user_id" => $embedData['user_id'] ?? 1,
+            "user_id" => $embedData['user_id'] ?? null,
             "cartItems" => $items,
             "transaction_id" => $app_trans_id
-            // "order_number" => $app_trans_id,
         ];
         Log::info("parsedData", $parsedData);
         if ($status == 1) {
@@ -159,7 +154,7 @@ class ZaloPayService
             Log::warning("ZaloPay Payment Failed: Transaction ID: $zp_trans_id, Amount: $amount");
         }
 
-        return response()->json(["return_code" => 1, "return_message" => "Success"]);
+        return response()->json(["return_code" => 1, "transaction_id" => $app_trans_id, "return_message" => "Success"]);
     }
 
 

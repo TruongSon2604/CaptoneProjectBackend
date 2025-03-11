@@ -40,7 +40,7 @@ class AddressService
     {
         return $this->addressRepository->find($id);
     }
-    public function getAddressByUser(): Collection
+    public function getAddressByUser()
     {
         return $this->addressRepository->getAddressByUser();
     }

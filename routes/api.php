@@ -25,6 +25,7 @@ Route::group([
 ], function ($router) {
     Route::post('/register', [AuthController::class, 'register'])->name('register');
     Route::post('/login', [AuthController::class, 'login'])->name('login');
+    Route::post('/updateUser', [AuthController::class, 'updateUser'])->name('updateUser');
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api')->name('logout');
     Route::post('/refresh', [AuthController::class, 'refresh'])->middleware('auth:api')->name('refresh');
     Route::post('/me', [AuthController::class, 'me'])->middleware('auth:api')->name('me');
@@ -46,6 +47,7 @@ Route::group([
 
     //product
     Route::get('/product', [ProductController::class, 'index']);
+    Route::get('/product2', [ProductController::class, 'index2']);
     Route::get('/product/{product}', [ProductController::class, 'show']);
     Route::get('/getProductByid/{id}', [ProductController::class, 'getProductByid']);
     Route::get('/getProductLimit', [ProductController::class, 'getProductLimit']);
@@ -65,6 +67,7 @@ Route::group([
         Route::post('categories/{categories}', [CategoryController::class, 'update']);
         Route::post('/categories', [CategoryController::class, 'store']);
         Route::delete('/categories/{categories}', [CategoryController::class, 'destroy']);
+        Route::delete('/deleteMoreCategory', [CategoryController::class, 'deleteMoreCategory']);
 
         //Status
         Route::apiResource('status', StatusController::class)->except(['update']);
@@ -75,6 +78,7 @@ Route::group([
         Route::post('/product', [ProductController::class, 'store']);
         Route::delete('/product/{product}', [ProductController::class, 'destroy']);
         Route::get('/getDiscountProduct', [ProductController::class, 'getDiscountedPrice']);
+        Route::delete('/deleteMoreProduct', [ProductController::class, 'deleteMoreProduct']);
 
         //Coupon
         Route::get('/coupon', [CouponController::class, 'index']);
@@ -128,7 +132,9 @@ Route::group([
 
         //Order
         Route::post('/createOrder',[OrderController::class,'createOrder']);
-
+        Route::get('/getOrder',[OrderController::class,'index']);
+        Route::get('/getAllOrderOfUser',[OrderController::class,'getAllOrderOfUser']);
+        Route::post('/getOrderDetailOfUser',[OrderController::class,'getOrderDetailOfUser']);
         //Payment
         Route::post("/UpdatePaymentOrder",[PaymentController::class,'UpdatePaymentOrder']);
         //order_zalopay

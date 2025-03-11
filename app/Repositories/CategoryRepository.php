@@ -87,7 +87,7 @@ class CategoryRepository extends BaseRepository implements CategoryInterface
      */
     public function getAllWithPagination(): mixed
     {
-        return Category::paginate(Category::ITEM_PER_PAGE);
+        return Category::all();
     }
 
     public function delete(int $id): mixed
@@ -101,6 +101,26 @@ class CategoryRepository extends BaseRepository implements CategoryInterface
             Storage::disk('public')->delete(str_replace('storage/', '', $oldImagePath));
         }
         $category->delete();
+        return true;
+    }
+
+    public function deleteMoreCategory(array|int $ids): mixed
+    {
+        $ids = is_array($ids) ? $ids : [$ids];
+        $categories = $this->model::whereIn('id', $ids)->get();
+
+        if ($categories->isEmpty()) {
+            return false;
+        }
+
+        foreach ($categories as $category) {
+            $oldImagePath = $category->image;
+            if ($oldImagePath && Storage::disk('public')->exists(str_replace('storage/', '', $oldImagePath))) {
+                Storage::disk('public')->delete(str_replace('storage/', '', $oldImagePath));
+            }
+            $category->delete();
+        }
+
         return true;
     }
 

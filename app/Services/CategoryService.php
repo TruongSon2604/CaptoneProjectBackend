@@ -93,4 +93,9 @@ class CategoryService
     {
         return $this->categoryRepository->getProductByCategory($id);
     }
+
+    public function deleteMoreCategory(array|int $ids)
+    {
+        return $this->categoryRepository->deleteMoreCategory($ids);
+    }
 }

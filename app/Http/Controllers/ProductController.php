@@ -33,6 +33,16 @@ class ProductController extends Controller
         ]);
     }
 
+    public function index2(): JsonResponse
+    {
+        $products = $this->productService->getAllWithPagination2();
+        return response()->json([
+            'data' => $products,
+            'status' => true,
+            'message' => 'Get Product Successful'
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -153,7 +163,7 @@ class ProductController extends Controller
 
     public function getDiscountedPrice(): JsonResponse
     {
-        $products= $this->productService->getDiscountedPrice();
+        $products = $this->productService->getDiscountedPrice();
         return response()->json($products->map(function ($product) {
             return [
                 'id' => $product->id,
@@ -164,11 +174,11 @@ class ProductController extends Controller
                 'discounted_price' => $product->discounted_price,
                 'discount_percent' => optional($product->discount)->percent_discount,
             ];
-            }));
+        }));
     }
 
-     public function getProductByid(Request $request,int $id): mixed
-     {
+    public function getProductByid(Request $request, int $id): mixed
+    {
         try {
             $product = $this->productService->getProductByid($id);
             if (!$product) {
@@ -188,10 +198,10 @@ class ProductController extends Controller
                 'message' => 'An error occurred: ' . $e->getMessage()
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
-     }
+    }
 
-     public function getProductLimit()
-     {
+    public function getProductLimit()
+    {
         try {
             $product = $this->productService->getProductLimit();
             if (!$product) {
@@ -211,5 +221,22 @@ class ProductController extends Controller
                 'message' => 'An error occurred: ' . $e->getMessage()
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
-     }
+    }
+
+    public function deleteMoreProduct(Request $request)
+    {
+        $ids = $request->input('ids'); // Lấy danh sách ID từ request
+
+        if (!$ids || !is_array($ids)) {
+            return response()->json(['message' => 'Invalid request data'], 400);
+        }
+
+        $deleted = $this->productService->deleteMoreProduct($ids);
+
+        if ($deleted) {
+            return response()->json(['message' => 'Deleted successfully'], 200);
+        }
+
+        return response()->json(['message' => 'Products not found'], 404);
+    }
 }

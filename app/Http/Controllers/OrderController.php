@@ -13,6 +13,15 @@ class OrderController extends Controller
     {
 
     }
+    public function index()
+    {
+        $orders = $this->orderService->getAllOrder();
+        return response()->json([
+            'status' => true,
+            'data' => $orders,
+            'message' => "Get Order Successful"
+        ]);
+    }
     public function createOrder(OrderRequest $orderRequest)
     {
         $order=$this->orderService->createOrder($orderRequest->validated());
@@ -30,4 +39,30 @@ class OrderController extends Controller
         }
     }
 
+    public function getAllOrderOfUser()
+    {
+        $order=$this->orderService->getAllOrderOfUser();
+        if($order)
+        {
+            return response()->json([
+                'message' => 'Get order of user successfully.',
+                'order' => $order,
+            ], 201);
+        }
+        else{
+            return response()->json([
+                'message' => 'Order not found',
+            ], 500);
+        }
+    }
+
+    public function getOrderDetailOfUser(Request $request)
+    {
+        $orders = $this->orderService->getOrderDetailOfUser($request->id);
+        return response()->json([
+            'status' => true,
+            'data' => $orders,
+            'message' => "Get Order Details of User Successful"
+        ]);
+    }
 }

@@ -7,6 +7,7 @@ use App\Models\Address;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AddressRepository extends BaseRepository implements AddressInterface
 {
@@ -39,9 +40,9 @@ class AddressRepository extends BaseRepository implements AddressInterface
         return Address::paginate(10);
     }
 
-    public function getAddressByUser(): Collection
+    public function getAddressByUser()
     {
         $userId = Auth::user()->id;
-        return Address::where('user_id', $userId)->get();
+        return DB::table('addresses')->where('user_id',$userId)->get();
     }
 }

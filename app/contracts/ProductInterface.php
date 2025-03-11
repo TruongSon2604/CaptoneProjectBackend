@@ -33,4 +33,6 @@ interface ProductInterface extends BaseInterface {
     public function getProductLimit();
 
     public function getProductByListId(array $data);
+
+    public function deleteMoreProduct(array|int $ids);
 }

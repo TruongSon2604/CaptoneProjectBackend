@@ -83,6 +83,10 @@ class ProductService
     {
         return $this->productRepository->getAllWithPagination();
     }
+    public function getAllWithPagination2(): mixed
+    {
+        return $this->productRepository->getAllWithPagination2();
+    }
 
     /**
      * Get the discounted price of products.
@@ -114,5 +118,10 @@ class ProductService
     public function getProductByListId(array $data)
     {
         return $this->productRepository->getProductByListId($data);
+    }
+
+    public function deleteMoreProduct(array|int $ids)
+    {
+        return $this->productRepository->deleteMoreProduct($ids);
     }
 }

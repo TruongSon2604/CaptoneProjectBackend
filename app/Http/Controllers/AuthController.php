@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserUpdateRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 // use Validator;
@@ -20,12 +22,18 @@ class AuthController extends Controller
      */
     public function register()
     {
+
         $validator = Validator::make(request()->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|confirmed|min:8',
-            'image' => 'required|string'
+            'image' => 'required'
         ]);
+
+        $image = request()->file('image');
+        $imageName = 'userr' . time() . '.' . $image->getClientOriginalExtension();
+        $image->storeAs('userr', $imageName, 'public');
+        $imagePath = 'storage/userr/' . $imageName;
 
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
@@ -34,9 +42,9 @@ class AuthController extends Controller
         $user = new User;
         $user->name = request()->name;
         $user->email = request()->email;
-        $user->phone_number=request()->phone_number;
+        $user->phone_number = request()->phone_number;
         $user->password = bcrypt(request()->password);
-        $user->image = request()->image;
+        $user->image = $imagePath;
         $user->save();
 
         return response()->json($user, 201);
@@ -100,10 +108,58 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
+        $user = Auth::user();
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            'user' => [
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->is_admin,
+                'image' => $user->image
+            ]
+        ]);
+    }
+
+    public function updateUser(UserUpdateRequest $request)
+    {
+        $data = $request->validated();
+        $user = User::find(Auth::id());
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'User not found',
+            ], 404);
+        }
+
+        // Kiểm tra nếu có ảnh mới được gửi lên
+        if ($request->hasFile('image')) {
+            $oldImagePath = $user->image;
+
+            $image = $request->file('image');
+            $imageName = 'userr' . time() . '.' . $image->getClientOriginalExtension();
+            $imagePath = 'userr/' . $imageName;
+
+            // Lưu ảnh vào thư mục storage/app/public/userr/
+            Storage::disk('public')->put($imagePath, file_get_contents($image));
+
+            // Cập nhật đường dẫn ảnh mới
+            $data['image'] = 'storage/' . $imagePath;
+
+            // Xóa ảnh cũ nếu tồn tại
+            if ($oldImagePath && Storage::disk('public')->exists(str_replace('storage/', '', $oldImagePath))) {
+                Storage::disk('public')->delete(str_replace('storage/', '', $oldImagePath));
+            }
+        }
+
+        // Cập nhật thông tin user
+        $user->fill($data)->save();
+
+        return response()->json([
+            'status' => true,
+            'data' => $user,
         ]);
     }
 }

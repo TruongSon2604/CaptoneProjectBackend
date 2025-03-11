@@ -31,4 +31,6 @@ interface CategoryInterface extends BaseInterface
 
     public function getProductByCategory($id);
 
+    public function deleteMoreCategory(array|int $ids);
+
 }

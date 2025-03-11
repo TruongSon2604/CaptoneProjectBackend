@@ -7,4 +7,6 @@ interface OrderInterface extends BaseInterface
     public function create(array $data);
 
     public function updateOrderStatus(array $data);
+
+    public function getAllOrder();
 }

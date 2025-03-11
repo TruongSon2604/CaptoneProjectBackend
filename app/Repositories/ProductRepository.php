@@ -6,6 +6,7 @@ use App\Contracts\ProductInterface;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ProductRepository extends BaseRepository implements ProductInterface
@@ -120,7 +121,39 @@ class ProductRepository extends BaseRepository implements ProductInterface
             COALESCE(discounts.percent_discount, 0) as discount_percent,
             ROUND(products.price * (1 - COALESCE(discounts.percent_discount, 0) / 100), 2) as discounted_price
         ')
-            ->paginate(Product::ITEM_PER_PAGE);
+            ->get();
+
+        return $products;
+    }
+
+    public function getAllWithPagination2(): mixed
+    {
+        // $product= $this->model::find(5);
+        // return $product->category;
+        // $category = Category::find(4);
+        // return $category->products()->where('price','<','49000')->paginate(3);
+
+        // return Category::with('products')->find(5);
+
+        // return Category::with(['products'=>function($query)
+        // {
+        //     $query->where('price','>',47661);
+        // }])->find(5);
+
+        // return $this->getModel()::find(5)->category->paginate(3);
+        $products = DB::table('products')
+            ->leftJoin('discounts', 'products.id', '=', 'discounts.product_id')
+            ->selectRaw('
+            products.id,
+            products.name,
+            products.stock_quantity,
+            products.image,
+            products.description,
+            products.price as original_price,
+            COALESCE(discounts.percent_discount, 0) as discount_percent,
+            ROUND(products.price * (1 - COALESCE(discounts.percent_discount, 0) / 100), 2) as discounted_price
+        ')
+            ->paginate(10);
 
         return $products;
     }
@@ -143,6 +176,26 @@ class ProductRepository extends BaseRepository implements ProductInterface
             Storage::disk('public')->delete(str_replace('storage/', '', $oldImagePath));
         }
         $product->delete();
+        return true;
+    }
+
+    public function deleteMoreProduct(array|int $ids): mixed
+    {
+        $ids = is_array($ids) ? $ids : [$ids];
+        $products = $this->model::whereIn('id', $ids)->get();
+
+        if ($products->isEmpty()) {
+            return false;
+        }
+
+        foreach ($products as $product) {
+            $oldImagePath = $product->image;
+            if ($oldImagePath && Storage::disk('public')->exists(str_replace('storage/', '', $oldImagePath))) {
+                Storage::disk('public')->delete(str_replace('storage/', '', $oldImagePath));
+            }
+            $product->delete();
+        }
+
         return true;
     }
 
@@ -169,6 +222,7 @@ class ProductRepository extends BaseRepository implements ProductInterface
                 return response()->json(data: ['message' => 'Product ' . $product->name . ' is out of stock.']);
             }
             $totalAmount += $product->discounted_price * $item['quantity'];
+            // Log::info("get total detail:".$totalAmount.'Product id:'.$item['product_id'].'discounted_price:'.$product->discounted_price.'quantity:'. $item['quantity']);
         }
         return $totalAmount;
     }
@@ -215,7 +269,7 @@ class ProductRepository extends BaseRepository implements ProductInterface
 
     public function getProductByListId(array $data)
     {
-        $products= $this->model::whereIn('id', $data['products_id'])->get();
+        $products = $this->model::whereIn('id', $data['products_id'])->get();
         return $products;
     }
 }
