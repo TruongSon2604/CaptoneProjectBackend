@@ -25,7 +25,7 @@ class CouponUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => 'nullable|string|unique:coupons,code|max:255',
+            'code' => 'nullable|string|max:255',
             'discount_type' => 'nullable|in:percentage,fixed',
             'discount_value' => 'nullable|numeric|min:0',
             'start_date' => 'nullable|date',

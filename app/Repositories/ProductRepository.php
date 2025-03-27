@@ -143,9 +143,11 @@ class ProductRepository extends BaseRepository implements ProductInterface
         // return $this->getModel()::find(5)->category->paginate(3);
         $products = DB::table('products')
             ->leftJoin('discounts', 'products.id', '=', 'discounts.product_id')
+            -> leftJoin('categories', 'categories.id', '=', 'products.categories_id')
             ->selectRaw('
             products.id,
             products.name,
+            categories.name as category_name,
             products.stock_quantity,
             products.image,
             products.description,
@@ -231,8 +233,10 @@ class ProductRepository extends BaseRepository implements ProductInterface
     {
         $products = DB::table('products')
             ->leftJoin('discounts', 'products.id', '=', 'discounts.product_id')
+            ->leftJoin('categories', 'categories.id', '=', 'products.categories_id')
             ->selectRaw('
             products.id,
+            categories.name as category_name,
             products.name,
             products.stock_quantity,
             products.image,
@@ -271,5 +275,57 @@ class ProductRepository extends BaseRepository implements ProductInterface
     {
         $products = $this->model::whereIn('id', $data['products_id'])->get();
         return $products;
+    }
+
+    public function filterProductBySelect(array $data)
+    {
+        $categoryId = $data['category_id'];
+        $priceRange = $data['price_range'];
+
+        $query = DB::table('products')
+            ->leftJoin('discounts', 'products.id', '=', 'discounts.product_id')
+            ->selectRaw('
+        products.id,
+        products.name,
+        products.stock_quantity,
+        products.image,
+        products.description,
+        products.price as original_price,
+        COALESCE(discounts.percent_discount, 0) as discount_percent,
+        ROUND(products.price * (1 - COALESCE(discounts.percent_discount, 0) / 100), 2) as discounted_price
+    ');
+
+
+
+        if (!empty($priceRange)) {
+            // This is a crucial change: Using `where` and `orWhere` properly grouped.
+            $query->where(function ($q) use ($priceRange) {
+                if (in_array('1', $priceRange)) {
+                    Log::info("v1 - Dưới 100k");
+                    $q->orWhereRaw('ROUND(products.price * (1 - COALESCE(discounts.percent_discount, 0) / 100), 2) < ?', [100000]);
+                }
+                if (in_array('2', $priceRange)) {
+                    Log::info("v2 - Từ 100k đến 500k");
+                    $q->orWhereBetween(
+                        DB::raw('ROUND(products.price * (1 - COALESCE(discounts.percent_discount, 0) / 100), 2)'),
+                        [100000, 500000]
+                    );
+                }
+                if (in_array('3', $priceRange)) {
+                    Log::info("v3 - Trên 500k");
+                    $q->orWhereRaw('ROUND(products.price * (1 - COALESCE(discounts.percent_discount, 0) / 100), 2) > ?', [500000]);
+                }
+            });
+        }
+        if ($categoryId) {
+            $query->selectRaw('categories.name as category_name');
+            $query->leftJoin('categories', 'categories.id', '=', 'products.categories_id')
+                ->where('products.categories_id', $categoryId);
+        }
+
+        $products = $query->get();
+        return $products;
+
+
     }
 }

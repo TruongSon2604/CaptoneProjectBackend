@@ -94,7 +94,7 @@ class OrderService
         Log::info("hello2");
         $user = Auth::user();
         $address_id = $data['address_id'];
-        $coupon_id = $data['coupon_id']??null;
+        $coupon_id = $data['coupon_id'] ?? null;
         $cartItems = $data['cartItems'];
         if (empty($cartItems)) {
             return response()->json(['message' => 'Your select is empty.'], 400);
@@ -107,7 +107,7 @@ class OrderService
         $discountAmount = $this->couponService->getDiscountAmount($coupon_id, $totalAmount);
         $shipping_fee = 25000;
         $finalAmount = $totalAmount - $discountAmount + $shipping_fee;
-        Log::info("finalAmount".$finalAmount.",totalAmount:".$totalAmount.",discountAmount:".$discountAmount);
+        Log::info("finalAmount" . $finalAmount . ",totalAmount:" . $totalAmount . ",discountAmount:" . $discountAmount);
         return $finalAmount;
     }
 
@@ -117,7 +117,7 @@ class OrderService
         try {
             // $user = Auth::user();
             $address_id = $data['address_id'];
-            $coupon_id = $data['coupon_id']??null;
+            $coupon_id = $data['coupon_id'] ?? null;
             $cartItems = $data['cartItems'];
             Log::info('Create order zalo2');
             if (empty($cartItems)) {
@@ -143,7 +143,7 @@ class OrderService
                 'status' => 'pending',
                 'status_payment' => 'paid',
                 'transaction_id' => $data['transaction_id'],
-                'shipping_fee' => 25000.00,
+                'shipping_fee' => $shipping_fee,
             ];
             $order = $this->orderRepository->create($dataOrder);
             Log::info('Create order zalo4 ' . $order);
@@ -188,5 +188,15 @@ class OrderService
     public function getOrderDetailOfUser(int $id)
     {
         return $this->orderRepository->getOrderDetailOfUser($id);
+    }
+
+    public function updateOrderStatus(array $data)
+    {
+        return $this->orderRepository->updateOrderStatus($data);
+    }
+
+    public function cancelOrder(array $data)
+    {
+        return $this->orderRepository->cancelOrder($data);
     }
 }

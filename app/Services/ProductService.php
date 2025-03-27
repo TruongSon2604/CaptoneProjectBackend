@@ -124,4 +124,8 @@ class ProductService
     {
         return $this->productRepository->deleteMoreProduct($ids);
     }
+    public function filterProductBySelect(array $data)
+    {
+        return $this->productRepository->filterProductBySelect($data);
+    }
 }

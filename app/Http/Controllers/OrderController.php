@@ -65,4 +65,23 @@ class OrderController extends Controller
             'message' => "Get Order Details of User Successful"
         ]);
     }
+    public function updateOrderStatus(Request $request)
+    {
+        $order = $this->orderService->updateOrderStatus($request->all());
+        return response()->json([
+            'status' => true,
+            'data' => $order,
+            'message' => "update Order Status Successful"
+        ]);
+    }
+    public function cancelOrder(Request $request)
+    {
+        $order = $this->orderService->cancelOrder($request->all());
+        return response()->json([
+            'status' => true,
+            'data' => $order,
+            'message' => "Order Cancelled Successfully"
+        ]);
+    }
+   
 }

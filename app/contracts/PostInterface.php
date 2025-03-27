@@ -2,10 +2,10 @@
 
 namespace App\Contracts;
 
-interface CouponInterface extends BaseInterface
+interface PostInterface extends BaseInterface
 {
     /**
-     * Create a new coupon record.
+     * Create a new book record.
      *
      * @param array $data
      *
@@ -14,7 +14,7 @@ interface CouponInterface extends BaseInterface
     public function create(array $data);
 
     /**
-     * Update an existing coupon record.
+     * Update an existing book record.
      *
      * @param array $data
      *
@@ -23,13 +23,9 @@ interface CouponInterface extends BaseInterface
     public function update(array $data, int $id);
 
     /**
-     * Get all Coupon Paginate records .
+     * Get all Category Paginate records .
      *
      * @return mixed
      */
     public function getAllWithPagination();
-
-    
-    public function deleteMoreCoupon(array|int $ids): mixed;
-
 }

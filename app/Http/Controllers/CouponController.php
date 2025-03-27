@@ -34,6 +34,16 @@ class CouponController extends Controller
         ]);
     }
 
+    public function index2(): JsonResponse
+    {
+        $coupons = $this->couponService->getAllWithPagination2();
+        return response()->json([
+            'status' => true,
+            'data' => $coupons,
+            'message' => "Get coupons Successful"
+        ]);
+    }
+
     /**
      * Store a new coupon in the database.
      *
@@ -151,7 +161,33 @@ class CouponController extends Controller
             ], JsonResponse::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
-            
+
+            return response()->json([
+                'status' => false,
+                'message' => 'An error occurred: ' . $e->getMessage()
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function deleteMoreCoupon(Request $request): JsonResponse
+    {
+        try {
+            $coupons = $this->couponService->deleteMoreCoupon($request->ids);
+            if ($coupons) {
+                return response()->json([
+                    'status' => true,
+                    'data' => $coupons,
+                    'message' => 'Delete Coupon Successful'
+                ]);
+            }
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Coupon not found',
+            ], JsonResponse::HTTP_NOT_FOUND);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
             return response()->json([
                 'status' => false,
                 'message' => 'An error occurred: ' . $e->getMessage()

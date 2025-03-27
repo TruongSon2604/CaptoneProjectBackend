@@ -239,4 +239,26 @@ class ProductController extends Controller
 
         return response()->json(['message' => 'Products not found'], 404);
     }
+    public function filterProductBySelect(Request $request)
+    {
+        try {
+            $product = $this->productService->filterProductBySelect($request->all());
+            if (!$product) {
+                throw new \Exception("Product not found");
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Get Product Limit 5 successfully',
+                'data' => $product
+            ], JsonResponse::HTTP_OK);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'An error occurred: ' . $e->getMessage()
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

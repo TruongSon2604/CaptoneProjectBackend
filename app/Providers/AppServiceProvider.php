@@ -9,6 +9,7 @@ use App\Contracts\CommentInterface;
 use App\Contracts\CouponInterface;
 use App\Contracts\OrderInterface;
 use App\Contracts\PaymentMethodInterface;
+use App\Contracts\PostInterface;
 use App\Contracts\ProductInterface;
 use App\Contracts\StatusInterface;
 use App\Contracts\UserCouponInterface;
@@ -20,11 +21,13 @@ use App\Repositories\CommentRepository;
 use App\Repositories\CouponRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\PaymentMedthodRepository;
+use App\Repositories\PostRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\StatusRepository;
 use App\Repositories\UserCouponRepository;
 use App\Services\PaymentMethodService;
 use Illuminate\Support\ServiceProvider;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -43,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CommentInterface::class,CommentRepository::class);
         $this->app->bind(CartInterface::class,CartRepository::class);
         $this->app->bind(OrderInterface::class,OrderRepository::class);
+        $this->app->bind(PostInterface::class,PostRepository::class);
     }
 
     /**

@@ -58,6 +58,7 @@ class OrderRepository extends BaseRepository implements OrderInterface
 
     public function updateOrderStatus(array $data)
     {
+        Log::info('Dữ liệu orderId:', ['orderId' => $data['orderId']]);
         $order = Order::findOrFail($data['orderId']);
         $order->status = $data['status'];
         $order->save();
@@ -76,6 +77,7 @@ class OrderRepository extends BaseRepository implements OrderInterface
             ->Join('addresses', 'addresses.id', '=', 'orders.address_id')
             ->selectRaw('
             orders.id,
+            orders.created_at,
             orders.order_number,
             orders.discount_amount,
             orders.final_amount,
@@ -103,10 +105,23 @@ class OrderRepository extends BaseRepository implements OrderInterface
             ->leftJoin('orders', 'orders.id', '=', 'order_details.orders_id')
             ->leftJoin('products', 'products.id', '=', 'order_details.products_id')
             ->leftJoin('discounts', 'discounts.product_id', '=', 'products.id')
+            ->leftJoin('users', 'users.id', '=', 'orders.user_id')
+            ->leftJoin('addresses', 'addresses.id', '=', 'orders.address_id')
             ->selectRaw('
+            users.name as user_name,
+            users.email,
             products.id,
             products.name,
             order_details.quantity,
+            orders.total_amount,
+            orders.final_amount,
+            orders.shipping_fee,
+            orders.id as order_id,
+            addresses.district,
+            addresses.ward,
+            addresses.provice,
+            addresses.address_detail,
+            addresses.phone,
             products.image,
             products.description,
             products.price as original_price,
@@ -120,4 +135,17 @@ class OrderRepository extends BaseRepository implements OrderInterface
         return $orderDetails;
     }
 
+    public function cancelOrder(array $data)
+    {
+        $order = Order::findOrFail($data['id']);
+        if (!$order) {
+            return response()->json(['message' => 'Order not found'], 404);
+        }
+        $order->status = 'canceled';
+        $order->canceled_at = now();
+        $order->cancellation_reason = $data['cancellation_reason'];
+        $order->save();
+
+        return $order;
+    }
 }

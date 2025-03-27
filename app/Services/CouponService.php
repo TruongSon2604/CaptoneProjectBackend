@@ -87,9 +87,18 @@ class CouponService
     {
         return $this->couponRepository->getAllWithPagination();
     }
+    public function getAllWithPagination2(): mixed
+    {
+        return $this->couponRepository->getAllWithPagination2();
+    }
 
     public function getDiscountAmount($couponId=null,$totalAmount): float
     {
         return $this->couponRepository->getDiscountAmount($couponId,$totalAmount);
+    }
+
+    public function deleteMoreCoupon(array|int $ids): mixed
+    {
+        return $this->couponRepository->deleteMoreCoupon($ids);
     }
 }

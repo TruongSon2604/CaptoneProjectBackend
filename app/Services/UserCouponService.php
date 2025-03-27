@@ -92,4 +92,9 @@ class UserCouponService
     {
         return $this->userCouponRepository->getUserWithCoupon();
     }
+
+    public function getAllUserWithCoupon()
+    {
+        return $this->userCouponRepository->getAllUserWithCoupon();
+    }
 }
