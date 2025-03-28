@@ -96,4 +96,11 @@ class CommentService
     {
         return $this->commentRepository->UserDeleteComment($data);
     }
+    /**
+     * Get comments by product ID.
+     */
+    public function getCommentByProductId(array $data)
+    {
+        return $this->commentRepository->getCommentByProductId($data);
+    }
 }

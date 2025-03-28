@@ -243,4 +243,28 @@ class CommentController extends Controller
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function getCommentByProductId(Request $request)
+    {
+        try {
+            $comment = $this->commentService->getCommentByProductId($request->route()->parameters());
+            if (!$comment) {
+                throw new \Exception("Comment not found");
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Show Comment successfully',
+                'data' => $comment
+            ], status: JsonResponse::HTTP_CREATED);
+
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json([
+                'status' => false,
+                'message' => 'An error occurred: ' . $e->getMessage()
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

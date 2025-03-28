@@ -93,7 +93,7 @@ class CommentRepository extends BaseRepository implements CommentInterface
      * Delete a comment by the user.
      *
      * @param  array  $data  The data for deleting the user's comment.
-     * 
+     *
      * @return \App\Models\Comment  The deleted comment instance.
      */
     public function UserDeleteComment(array $data):Comment
@@ -102,5 +102,13 @@ class CommentRepository extends BaseRepository implements CommentInterface
         ->where('product_id', $data['product_id'])->first();
         $comment->delete();
         return $comment;
+    }
+
+    public function getCommentByProductId(array $data)
+    {
+        $comments = $this->model::where('product_id', $data['id'])
+            ->with('user')
+            ->paginate(Comment::ITEM_PER_PAGE);
+        return $comments;
     }
 }

@@ -64,6 +64,8 @@ Route::group([
     Route::get('/post', [PostController::class, 'index']);
     Route::get('/post/{post}', [PostController::class, 'show']);
 
+    Route::get('/getCommentByProductId/{id}', [CommentController::class, 'getCommentByProductId']);
+
 
     Route::middleware('auth:api')->group(function () {
         Route::middleware('is_admin')->group(function () {
