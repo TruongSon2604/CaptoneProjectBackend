@@ -120,10 +120,10 @@ class PostController extends Controller
      *
      * @return JsonResponse
      */
-    public function destroy(int $id): JsonResponse
+    public function destroy(Request $request): JsonResponse
     {
         try {
-            $post = $this->postService->delete($id);
+            $post = $this->postService->delete($request->ids);
             if ($post) {
                 return response()->json([
                     'status' => true,

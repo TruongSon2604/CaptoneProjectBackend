@@ -94,24 +94,51 @@ class PostRepository extends BaseRepository implements PostInterface
         return Post::all();
     }
 
-    public function delete(int $id): mixed
+    // public function delete(int $id): mixed
+    // {
+    //     $post = $this->find($id);
+    //     if (!$post) {
+    //         return false;
+    //     }
+
+    //     $oldImagePath = $post->imagePrimary;
+    //     $oldImagePath2 = $post->imageSecondary;
+    //     if ($oldImagePath && Storage::disk('public')->exists(str_replace('storage/', '', $oldImagePath))) {
+    //         Storage::disk('public')->delete(str_replace('storage/', '', $oldImagePath));
+    //     }
+    //     if ($oldImagePath2 && Storage::disk('public')->exists(str_replace('storage/', '', $oldImagePath2))) {
+    //         Storage::disk('public')->delete(str_replace('storage/', '', $oldImagePath2));
+    //     }
+    //     $post->delete();
+
+    //     return true;
+    // }
+    public function delete(array|int $ids): mixed
     {
-        $post = $this->find($id);
-        if (!$post) {
+        // Nếu là một ID đơn lẻ, chuyển thành mảng
+        $ids = is_array($ids) ? $ids : [$ids];
+
+        $posts = $this->model::whereIn('id', $ids)->get();
+
+        if ($posts->isEmpty()) {
             return false;
         }
 
-        $oldImagePath = $post->imagePrimary;
-        $oldImagePath2 = $post->imageSecondary;
-        if ($oldImagePath && Storage::disk('public')->exists(str_replace('storage/', '', $oldImagePath))) {
-            Storage::disk('public')->delete(str_replace('storage/', '', $oldImagePath));
+        foreach ($posts as $post) {
+            $oldImagePath = $post->imagePrimary;
+            $oldImagePath2 = $post->imageSecondary;
+
+            if ($oldImagePath && Storage::disk('public')->exists(str_replace('storage/', '', $oldImagePath))) {
+                Storage::disk('public')->delete(str_replace('storage/', '', $oldImagePath));
+            }
+
+            if ($oldImagePath2 && Storage::disk('public')->exists(str_replace('storage/', '', $oldImagePath2))) {
+                Storage::disk('public')->delete(str_replace('storage/', '', $oldImagePath2));
+            }
+
+            $post->delete();
         }
-        if ($oldImagePath2 && Storage::disk('public')->exists(str_replace('storage/', '', $oldImagePath2))) {
-            Storage::disk('public')->delete(str_replace('storage/', '', $oldImagePath2));
-        }
-        $post->delete();
 
         return true;
     }
-
 }

@@ -21,7 +21,7 @@ class PostService
         return $this->postRepository->update($data, $id);
     }
 
-    public function delete(int $id)
+    public function delete(int|array $id)
     {
         return $this->postRepository->delete($id);
     }

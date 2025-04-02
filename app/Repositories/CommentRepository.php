@@ -61,7 +61,7 @@ class CommentRepository extends BaseRepository implements CommentInterface
      */
     public function getAllWithPagination(): LengthAwarePaginator
     {
-        return Comment::paginate(Comment::ITEM_PER_PAGE);
+        return Comment::paginate(100);
     }
 
     /**
@@ -73,20 +73,20 @@ class CommentRepository extends BaseRepository implements CommentInterface
      *
      * @throws \Exception  If the comment does not exist or doesn't belong to the user.
      */
-    public function UserUpdateComment(array $data):Comment
+    public function UserUpdateComment(array $data): Comment
     {
         $comment = $this->model::where('user_id', Auth::user()->id)
             ->where('product_id', $data['product_id'])->first();
 
-            if (!$comment) {
-                throw new \Exception("Comment not found or doesn't belong to the user.");
-            }
-            $comment->update([
-                'content' => $data['content'],
-                'rating' => $data['rating'],
-            ]);
+        if (!$comment) {
+            throw new \Exception("Comment not found or doesn't belong to the user.");
+        }
+        $comment->update([
+            'content' => $data['content'],
+            'rating' => $data['rating'],
+        ]);
 
-            return $comment;
+        return $comment;
     }
 
     /**
@@ -96,10 +96,10 @@ class CommentRepository extends BaseRepository implements CommentInterface
      *
      * @return \App\Models\Comment  The deleted comment instance.
      */
-    public function UserDeleteComment(array $data):Comment
+    public function UserDeleteComment(array $data): Comment
     {
         $comment = $this->model::where('user_id', Auth::user()->id)
-        ->where('product_id', $data['product_id'])->first();
+            ->where('product_id', $data['product_id'])->first();
         $comment->delete();
         return $comment;
     }
@@ -108,7 +108,8 @@ class CommentRepository extends BaseRepository implements CommentInterface
     {
         $comments = $this->model::where('product_id', $data['id'])
             ->with('user')
-            ->paginate(Comment::ITEM_PER_PAGE);
+            ->orderBy('created_at', 'desc')
+            ->paginate(100);
         return $comments;
     }
 }

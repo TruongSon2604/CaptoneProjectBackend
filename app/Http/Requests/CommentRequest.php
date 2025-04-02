@@ -6,6 +6,8 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class CommentRequest extends FormRequest
 {
@@ -28,9 +30,21 @@ class CommentRequest extends FormRequest
     {
         return [
             // 'user_id' => 'required|integer|exists:users,id',
-            'product_id'=>'required|integer|exists:products,id',
+            // 'product_id'=>'required|integer|exists:products,id',
+            'product_id' => [
+                'required',
+                'integer',
+                Rule::exists('order_details', 'products_id')->where(function ($query) {
+                    $query->whereExists(function ($subQuery) {
+                        $subQuery->select('id')
+                            ->from('orders')
+                            ->whereColumn('orders.id', 'order_details.orders_id') // Liên kết 2 bảng
+                            ->where('orders.user_id', Auth::id()); // Kiểm tra user_id
+                    });
+                }),
+            ],
             'content' => 'required|string|max:1000',
-            'rating' => 'required|integer|between:1,5',
+            'rating' => 'required|numeric|between:1,5',
         ];
     }
 

@@ -95,7 +95,7 @@ class OrderRepository extends BaseRepository implements OrderInterface
 
     public function getAllOrderOfUser()
     {
-        $ordersUserWithAddress = Order::with('user')->where('user_id', Auth::id())->get();
+        $ordersUserWithAddress = Order::with('user')->where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
         return $ordersUserWithAddress;
     }
 
@@ -115,6 +115,7 @@ class OrderRepository extends BaseRepository implements OrderInterface
             order_details.quantity,
             orders.total_amount,
             orders.final_amount,
+            orders.created_at as ngaydat,
             orders.shipping_fee,
             orders.id as order_id,
             addresses.district,
@@ -128,7 +129,8 @@ class OrderRepository extends BaseRepository implements OrderInterface
             COALESCE(discounts.percent_discount, 0) as discount_percent,
             ROUND(products.price * (1 - COALESCE(discounts.percent_discount, 0) / 100), 2) as discounted_price,
             ROUND(order_details.quantity * products.price * (1 - COALESCE(discounts.percent_discount, 0) / 100), 2) as sub_total
-        ')->where('orders.id', $id)->get();
+        ')->where('orders.id', $id)
+            ->get();
 
         Log::info($orderDetails);
 

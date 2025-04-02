@@ -32,14 +32,6 @@ Route::group([
     Route::post('/me', [AuthController::class, 'me'])->middleware('auth:api')->name('me');
 });
 
-//google
-// Route::group([
-//     'middleware' => 'api',
-// ], function () {
-//     Route::get('/auth/google/redirect', [LoginGooleController::class, 'redirectToGoogle']);
-//     Route::get('/auth/google/callback', [LoginGooleController::class, 'handleGoogleCallback']);
-// });
-
 
 Route::group([
     'middleware' => 'api',
@@ -48,6 +40,11 @@ Route::group([
 
     //product
     Route::get('/product', [ProductController::class, 'index']);
+    Route::get('/testapi', function () {
+        return response()->json([
+            'a' => 'alo'
+        ]);
+    });
     Route::get('/product2', [ProductController::class, 'index2']);
     Route::get('/product/{product}', [ProductController::class, 'show']);
     Route::get('/getProductByid/{id}', [ProductController::class, 'getProductByid']);
@@ -91,7 +88,7 @@ Route::group([
             Route::delete('/post/{coupposton}', [PostController::class, 'destroy']);
             Route::post('/post/{post}', [PostController::class, 'update']);
             Route::post('/post', [PostController::class, 'store']);
-            Route::delete('/deleteMorePost', [PostController::class, 'deleteMorePost']);
+            Route::delete('/deleteMorePost', [PostController::class, 'destroy']);
 
 
             //Discount
