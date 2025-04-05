@@ -162,4 +162,13 @@ class AuthController extends Controller
             'data' => $user,
         ]);
     }
+
+    public function getUserDashBoard()
+    {
+        $countUser = User::where('is_admin', 0)->count();
+        return response()->json([
+            'status' => true,
+            'data' => $countUser,
+        ]);
+    }
 }

@@ -128,4 +128,13 @@ class ProductService
     {
         return $this->productRepository->filterProductBySelect($data);
     }
+
+    public function searchProduct(string $value)
+    {
+        return $this->productRepository->searchProduct($value);
+    }
+    public function getProductDashboard()
+    {
+        return $this->productRepository->getProductDashboard();
+    }
 }

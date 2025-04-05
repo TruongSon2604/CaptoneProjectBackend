@@ -24,15 +24,13 @@ class OrderController extends Controller
     }
     public function createOrder(OrderRequest $orderRequest)
     {
-        $order=$this->orderService->createOrder($orderRequest->validated());
-        if($order)
-        {
+        $order = $this->orderService->createOrder($orderRequest->validated());
+        if ($order) {
             return response()->json([
                 'message' => 'Order placed successfully.',
                 'order' => $order,
             ], 201);
-        }
-        else{
+        } else {
             return response()->json([
                 'message' => 'An error occurred while placing the order.',
             ], 500);
@@ -41,15 +39,13 @@ class OrderController extends Controller
 
     public function getAllOrderOfUser()
     {
-        $order=$this->orderService->getAllOrderOfUser();
-        if($order)
-        {
+        $order = $this->orderService->getAllOrderOfUser();
+        if ($order) {
             return response()->json([
                 'message' => 'Get order of user successfully.',
                 'order' => $order,
             ], 201);
-        }
-        else{
+        } else {
             return response()->json([
                 'message' => 'Order not found',
             ], 500);
@@ -83,5 +79,38 @@ class OrderController extends Controller
             'message' => "Order Cancelled Successfully"
         ]);
     }
-   
+
+    public function getOrderDashBoard()
+    {
+        $order = $this->orderService->getOrderDashBoard();
+        return response()->json([
+            'status' => true,
+            'data' => $order,
+        ]);
+    }
+    public function getTotal()
+    {
+        $order = $this->orderService->getTotal();
+        return response()->json([
+            'status' => true,
+            'data' => $order,
+        ]);
+    }
+
+    public function getRevenueByMonth()
+    {
+        $order = $this->orderService->getRevenueByMonth();
+        return response()->json([
+            'status' => true,
+            'data' => $order,
+        ]);
+    }
+    public function getOrderByMonth()
+    {
+        $order = $this->orderService->getOrderByMonth();
+        return response()->json([
+            'status' => true,
+            'data' => $order,
+        ]);
+    }
 }

@@ -37,14 +37,19 @@ Route::group([
     'middleware' => 'api',
 ], function () {
     //public//
+    //dashboard
+    Route::get('/productDashboard', [ProductController::class, 'getProductDashboard']);
+    Route::get('/getUserDashBoard', [AuthController::class, 'getUserDashBoard']);
+    Route::get('/getOrderDashBoard', [OrderController::class, 'getOrderDashBoard']);
+    Route::get('/getTotal', [OrderController::class, 'getTotal']);
+    Route::get('/getRevenueByMonth', [OrderController::class, 'getRevenueByMonth']);
+    Route::get('/getOrderByMonth', [OrderController::class, 'getOrderByMonth']);
+
 
     //product
     Route::get('/product', [ProductController::class, 'index']);
-    Route::get('/testapi', function () {
-        return response()->json([
-            'a' => 'alo'
-        ]);
-    });
+    Route::get('/products/search', [ProductController::class, 'search']);
+
     Route::get('/product2', [ProductController::class, 'index2']);
     Route::get('/product/{product}', [ProductController::class, 'show']);
     Route::get('/getProductByid/{id}', [ProductController::class, 'getProductByid']);

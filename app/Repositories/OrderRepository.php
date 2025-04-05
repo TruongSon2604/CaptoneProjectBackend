@@ -150,4 +150,39 @@ class OrderRepository extends BaseRepository implements OrderInterface
 
         return $order;
     }
+
+    public function getOrderDashBoard()
+    {
+        // $orders = Order::where('status', '!=', 'canceled')->count();
+        $orders = Order::count();
+        return $orders;
+    }
+
+    public function getTotal()
+    {
+        $totalValue = Order::sum('final_amount');
+        return $totalValue;
+    }
+
+    public function getRevenueByMonth()
+    {
+        $revenueByMonth = DB::table('orders')
+            ->select(DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'), DB::raw('SUM(final_amount) as total_revenue'))
+            ->groupBy('month')
+            ->orderBy('month', 'asc')
+            ->get();
+
+        return $revenueByMonth;
+    }
+
+    public function getOrderByMonth()
+    {
+        $orderByMonth = DB::table('orders')
+            ->select(DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'), DB::raw('COUNT(*) as total_orders'))
+            ->groupBy('month')
+            ->orderBy('month', 'asc')
+            ->get();
+
+        return $orderByMonth;
+    }
 }

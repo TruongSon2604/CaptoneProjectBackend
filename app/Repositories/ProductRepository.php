@@ -331,4 +331,19 @@ class ProductRepository extends BaseRepository implements ProductInterface
 
 
     }
+
+    public function searchProduct(string $value)
+    {
+        $products = Product::where('name', 'like', '%' . $value . '%')
+        ->select('id', 'name', 'price', 'image')
+        ->limit(5)
+        ->get();
+
+        return $products;
+    }
+
+    public function getProductDashboard()
+    {
+        return Product::count();
+    }
 }

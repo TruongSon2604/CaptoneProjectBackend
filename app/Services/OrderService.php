@@ -199,4 +199,22 @@ class OrderService
     {
         return $this->orderRepository->cancelOrder($data);
     }
+
+    public function getOrderDashBoard()
+    {
+        return $this->orderRepository->getOrderDashBoard();
+    }
+    public function getTotal()
+    {
+        return $this->orderRepository->getTotal();
+    }
+
+    public function getRevenueByMonth()
+    {
+        return $this->orderRepository->getRevenueByMonth();
+    }
+    public function getOrderByMonth()
+    {
+        return $this->orderRepository->getOrderByMonth();
+    }
 }

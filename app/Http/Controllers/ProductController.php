@@ -261,4 +261,28 @@ class ProductController extends Controller
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    public function search(Request $request)
+    {
+        $query = $request->query('query');
+
+        if (!$query) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Vui lòng nhập từ khóa tìm kiếm'
+            ], 400);
+        }
+        $products= $this->productService->searchProduct($query);
+        return response()->json([
+            'success' => true,
+            'data' => $products
+        ]);
+    }
+    public function getProductDashboard()
+    {
+        $count= $this->productService->getProductDashboard();
+        return response()->json([
+            'success' => true,
+            'data' => $count
+        ]);
+    }
 }
