@@ -89,6 +89,7 @@ class OrderRepository extends BaseRepository implements OrderInterface
             users.image,
              addresses.phone
             ')
+            ->orderBy('orders.created_at', 'desc')
             ->get();
         return $ordersUserWithAddress;
     }
@@ -184,5 +185,26 @@ class OrderRepository extends BaseRepository implements OrderInterface
             ->get();
 
         return $orderByMonth;
+    }
+
+    public function getDetailProductSoldByMonth(string $month)
+    {
+        $orderDetails = DB::table('order_details')
+            ->join('orders', 'orders.id', '=', 'order_details.orders_id')
+            ->join('products', 'products.id', '=', 'order_details.products_id')
+            ->selectRaw('
+            products.id as product_id,
+            products.name as product_name,
+            products.image as image_url,
+            products.description as product_description,
+            ROUND(products.price * (1 - COALESCE(MAX(orders.discount_amount), 0) / 100), 2) as discounted_price,
+            SUM(order_details.quantity) as quantity,
+            DATE_FORMAT(orders.created_at, "%Y-%m") as month
+        ')
+            ->whereRaw('DATE_FORMAT(orders.created_at, "%Y-%m") = ?', [$month])  // Lọc theo tháng
+            ->groupBy('product_id', 'month')
+            ->orderBy('month', 'asc')
+            ->get();
+        return $orderDetails;
     }
 }

@@ -8,6 +8,7 @@ use App\Services\AddressService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class AddressController extends Controller
 {
@@ -132,7 +133,7 @@ class AddressController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
         try {
             $address = $this->addressService->delete($id);
@@ -140,7 +141,7 @@ class AddressController extends Controller
                 return response()->json([
                     'status' => true,
                     'data' => $address,
-                    'message' => 'Delete Category Successful'
+                    'message' => 'Delete Address Successful'
                 ]);
             }
 

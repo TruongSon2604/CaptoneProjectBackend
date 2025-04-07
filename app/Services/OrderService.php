@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class OrderService
 {
@@ -47,7 +48,8 @@ class OrderService
                 'user_id' => $user->id,
                 'address_id' => $address_id,
                 'coupon_id' => $coupon_id ? $coupon_id : null,
-                'order_number' => 'ORD-' . date('YmdHi'),
+                // 'order_number' => 'ORD-' . date('YmdHi'),
+                'order_number' => 'ORD-' . now()->format('YmdHis') . rand(1000, 9999).uniqid(),
                 'total_amount' => $totalAmount,
                 'discount_amount' => $discountAmount,
                 'final_amount' => $finalAmount,
@@ -136,7 +138,7 @@ class OrderService
                 'user_id' => $data['user_id'],
                 'address_id' => $address_id,
                 'coupon_id' => $coupon_id ? $coupon_id : null,
-                'order_number' => 'ORD-' . date('YmdHi'),
+                'order_number' => 'ORD-' . now()->format('YmdHis') . rand(1000, 9999).uniqid(),
                 'total_amount' => $totalAmount,
                 'discount_amount' => $discountAmount,
                 'final_amount' => $finalAmount,
@@ -216,5 +218,9 @@ class OrderService
     public function getOrderByMonth()
     {
         return $this->orderRepository->getOrderByMonth();
+    }
+    public function getDetailProductSoldByMonth(string $month)
+    {
+        return $this->orderRepository->getDetailProductSoldByMonth($month);
     }
 }

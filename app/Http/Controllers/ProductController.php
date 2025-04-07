@@ -285,4 +285,13 @@ class ProductController extends Controller
             'data' => $count
         ]);
     }
+
+    public function getTotalProductOfCategory()
+    {
+        $count= $this->productService->getTotalProductOfCategory();
+        return response()->json([
+            'success' => true,
+            'data' => $count
+        ]);
+    }
 }

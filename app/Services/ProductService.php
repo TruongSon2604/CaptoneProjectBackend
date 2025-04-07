@@ -137,4 +137,8 @@ class ProductService
     {
         return $this->productRepository->getProductDashboard();
     }
+    public function getTotalProductOfCategory()
+    {
+        return $this->productRepository->getTotalProductOfCategory();
+    }
 }

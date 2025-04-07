@@ -44,6 +44,8 @@ Route::group([
     Route::get('/getTotal', [OrderController::class, 'getTotal']);
     Route::get('/getRevenueByMonth', [OrderController::class, 'getRevenueByMonth']);
     Route::get('/getOrderByMonth', [OrderController::class, 'getOrderByMonth']);
+    Route::get('/getTotalProductOfCategory', [ProductController::class, 'getTotalProductOfCategory']);
+    Route::get('/getDetailProductSoldByMonth/{month}', [OrderController::class, 'getDetailProductSoldByMonth']);
 
 
     //product
@@ -120,6 +122,7 @@ Route::group([
         Route::apiResource('address', AddressController::class)->except(['update']);
         Route::post('address/{address}', [AddressController::class, 'update']);
         Route::get('/getAddressByUser', [AddressController::class, 'getAddressByUser']);
+        Route::delete('address/{address}', [AddressController::class, 'destroy']);
 
 
 

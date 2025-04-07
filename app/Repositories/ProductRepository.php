@@ -346,4 +346,18 @@ class ProductRepository extends BaseRepository implements ProductInterface
     {
         return Product::count();
     }
+    public function getTotalProductOfCategory()
+    {
+        // $categories = Category::withCount('products')->get();
+        $categories = DB::table('categories')
+            ->leftJoin('products', 'categories.id', '=', 'products.categories_id')
+            ->selectRaw('
+                categories.id,
+                categories.name,
+                COUNT(products.id) as total_products
+            ')
+            ->groupBy('categories.id', 'categories.name')
+            ->get();
+        return $categories;
+    }
 }
