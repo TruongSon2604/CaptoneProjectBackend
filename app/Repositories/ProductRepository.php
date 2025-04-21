@@ -146,7 +146,7 @@ class ProductRepository extends BaseRepository implements ProductInterface
         // return $this->getModel()::find(5)->category->paginate(3);
         $products = DB::table('products')
             ->leftJoin('discounts', 'products.id', '=', 'discounts.product_id')
-            -> leftJoin('categories', 'categories.id', '=', 'products.categories_id')
+            ->leftJoin('categories', 'categories.id', '=', 'products.categories_id')
             ->selectRaw('
             products.id,
             products.name,
@@ -234,23 +234,52 @@ class ProductRepository extends BaseRepository implements ProductInterface
 
     public function getProductByid(int $id): mixed
     {
+        // $products = DB::table('products')
+        //     ->leftJoin('discounts', 'products.id', '=', 'discounts.product_id')
+        //     ->leftJoin('categories', 'categories.id', '=', 'products.categories_id')
+        //     ->selectRaw('
+        //     products.id,
+        //     categories.name as category_name,
+        //     products.name,
+        //     products.stock_quantity,
+        //     products.image,
+        //     products.description,
+        //     products.price as original_price,
+        //     COALESCE(discounts.percent_discount, 0) as discount_percent,
+        //     ROUND(products.price * (1 - COALESCE(discounts.percent_discount, 0) / 100), 2) as discounted_price
+        // ')
+        //     ->where('products.id', $id)
+        //     ->get();
         $products = DB::table('products')
             ->leftJoin('discounts', 'products.id', '=', 'discounts.product_id')
             ->leftJoin('categories', 'categories.id', '=', 'products.categories_id')
+            ->leftJoin('comments', 'products.id', '=', 'comments.product_id')
             ->selectRaw('
-            products.id,
-            categories.name as category_name,
-            products.name,
-            products.stock_quantity,
-            products.image,
-            products.description,
-            products.price as original_price,
-            COALESCE(discounts.percent_discount, 0) as discount_percent,
-            ROUND(products.price * (1 - COALESCE(discounts.percent_discount, 0) / 100), 2) as discounted_price
-        ')
+        products.id,
+        categories.name as category_name,
+        products.name,
+        products.stock_quantity,
+        products.image,
+        products.description,
+        products.price as original_price,
+        COALESCE(discounts.percent_discount, 0) as discount_percent,
+        ROUND(products.price * (1 - COALESCE(discounts.percent_discount, 0) / 100), 2) as discounted_price,
+
+        COUNT(comments.id) as total_comments,  -- Tổng số comment
+        AVG(comments.rating) as average_rating -- Trung bình số sao đánh giá
+    ')
             ->where('products.id', $id)
+            ->groupBy(
+                'products.id',
+                'categories.name',
+                'products.name',
+                'products.stock_quantity',
+                'products.image',
+                'products.description',
+                'products.price',
+                'discounts.percent_discount'
+            )
             ->get();
-        // $product = $this->model::find($id);
         return $products;
     }
 
@@ -335,9 +364,9 @@ class ProductRepository extends BaseRepository implements ProductInterface
     public function searchProduct(string $value)
     {
         $products = Product::where('name', 'like', '%' . $value . '%')
-        ->select('id', 'name', 'price', 'image')
-        ->limit(5)
-        ->get();
+            ->select('id', 'name', 'price', 'image')
+            ->limit(5)
+            ->get();
 
         return $products;
     }
@@ -359,5 +388,76 @@ class ProductRepository extends BaseRepository implements ProductInterface
             ->groupBy('categories.id', 'categories.name')
             ->get();
         return $categories;
+    }
+
+    public function getproductDiscount()
+    {
+        // $products = DB::table('products')
+        //     ->leftJoin('discounts', 'products.id', '=', 'discounts.product_id')
+        //     ->selectRaw('
+        //     products.id,
+        //     products.name,
+        //     products.stock_quantity,
+        //     products.image,
+        //     products.description,
+        //     products.price as original_price,
+        //     COALESCE(discounts.percent_discount, 0) as discount_percent,
+        //     ROUND(products.price * (1 - COALESCE(discounts.percent_discount, 0) / 100), 2) as discounted_price
+        // ')
+        //     ->get();
+
+        // return $products;
+        $products = DB::table('products')
+            ->join('discounts', 'products.id', '=', 'discounts.product_id')
+            ->join('order_details', 'products.id', '=', 'order_details.products_id')
+            ->selectRaw('
+            products.id,
+            products.name,
+            products.stock_quantity,
+            products.image,
+            products.description,
+            products.price as original_price,
+            COALESCE(discounts.percent_discount, 0) as discount_percent,
+            ROUND(products.price * (1 - COALESCE(discounts.percent_discount, 0) / 100), 2) as discounted_price,
+            COALESCE(SUM(order_details.quantity), 0) as sold_quantity
+        ')
+            ->groupBy(
+                'products.id',
+                'products.name',
+                'products.stock_quantity',
+                'products.image',
+                'products.description',
+                'products.price',
+                'discounts.percent_discount'
+            )
+            ->get();
+
+        return $products;
+    }
+
+    public function findProductByImage(array $data)
+    {
+        $products = DB::table('products')
+            ->leftJoin('discounts', 'products.id', '=', 'discounts.product_id')
+            ->leftJoin('categories', 'categories.id', '=', 'products.categories_id')
+            ->selectRaw('
+        products.id,
+        products.name,
+        categories.name as category_name,
+        products.stock_quantity,
+        products.image,
+        products.description,
+        products.price as original_price,
+        COALESCE(discounts.percent_discount, 0) as discount_percent,
+        ROUND(products.price * (1 - COALESCE(discounts.percent_discount, 0) / 100), 2) as discounted_price
+        ')
+            ->whereIn(
+                DB::raw("REPLACE(products.image, 'storage/products/', '')"),
+                $data
+            )
+            ->paginate(10);
+
+        return $products;
+
     }
 }

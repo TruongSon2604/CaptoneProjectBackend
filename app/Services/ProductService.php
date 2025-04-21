@@ -141,4 +141,14 @@ class ProductService
     {
         return $this->productRepository->getTotalProductOfCategory();
     }
+
+    public function getproductDiscount()
+    {
+        return $this->productRepository->getproductDiscount();
+    }
+
+    public function findProductByImage(array $data)
+    {
+        return $this->productRepository->findProductByImage($data);
+    }
 }

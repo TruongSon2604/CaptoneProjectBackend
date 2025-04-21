@@ -138,20 +138,65 @@ class OrderRepository extends BaseRepository implements OrderInterface
         return $orderDetails;
     }
 
+    // public function cancelOrder(array $data)
+    // {
+    //     $order = Order::findOrFail($data['id']);
+    //     if (!$order) {
+    //         return response()->json(['message' => 'Order not found'], 404);
+    //     }
+    //     $order->status = 'canceled';
+    //     $order->canceled_at = now();
+    //     $order->cancellation_reason = $data['cancellation_reason'];
+    //     $order->save();
+
+    //     return $order;
+    // }
     public function cancelOrder(array $data)
     {
-        $order = Order::findOrFail($data['id']);
-        if (!$order) {
-            return response()->json(['message' => 'Order not found'], 404);
+        DB::beginTransaction();
+
+        try {
+            Log::info("order id: " . $data['id']);
+
+            $order = Order::with('orderDetails.product')->find($data['id']);
+
+            if (!$order) {
+                Log::info("Order not found");
+                // return response()->json(['message' => 'Order not found'], 404);
+            }
+
+            Log::info("Đây là order:", $order->toArray());
+
+            if ($order->status === 'completed') {
+                Log::info("vao completed");
+                return 0;
+                // return response()->json(['message' => 'Cannot cancel a completed order'], 400);
+            }
+
+            // Cập nhật lại số lượng tồn kho sản phẩm
+            foreach ($order->orderDetails as $detail) {
+                if ($detail->product) {
+                    $detail->product->stock_quantity += $detail->quantity;
+                    $detail->product->save();
+                }
+            }
+
+            // Cập nhật trạng thái đơn hàng
+            $order->status = 'canceled';
+            $order->canceled_at = now();
+            $order->cancellation_reason = $data['cancellation_reason'] ?? null;
+            $order->save();
+
+            DB::commit();
+            return 1;
+            // return response()->json(['message' => 'Order canceled and stock updated successfully']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::info('error cancel order: ' . $e->getMessage());
+            return 2;
+            // return response()->json(['message' => 'Failed to cancel order', 'error' => $e->getMessage()], 500);
         }
-        $order->status = 'canceled';
-        $order->canceled_at = now();
-        $order->cancellation_reason = $data['cancellation_reason'];
-        $order->save();
-
-        return $order;
     }
-
     public function getOrderDashBoard()
     {
         // $orders = Order::where('status', '!=', 'canceled')->count();
@@ -187,6 +232,27 @@ class OrderRepository extends BaseRepository implements OrderInterface
         return $orderByMonth;
     }
 
+    // public function getDetailProductSoldByMonth(string $month)
+    // {
+    //     $orderDetails = DB::table('order_details')
+    //         ->join('orders', 'orders.id', '=', 'order_details.orders_id')
+    //         ->join('products', 'products.id', '=', 'order_details.products_id')
+    //         ->selectRaw('
+    //         products.id as product_id,
+    //         products.name as product_name,
+    //         products.image as image_url,
+    //         products.description as product_description,
+    //         ROUND(products.price * (1 - COALESCE(MAX(orders.discount_amount), 0) / 100), 2) as discounted_price,
+    //         SUM(order_details.quantity) as quantity,
+    //         DATE_FORMAT(orders.created_at, "%Y-%m") as month
+    //     ')
+    //         ->whereRaw('DATE_FORMAT(orders.created_at, "%Y-%m") = ?', [$month])  // Lọc theo tháng
+    //         ->where('orders.status', '!=', 'canceled')
+    //         ->groupBy('product_id', 'month')
+    //         ->orderBy('month', 'asc')
+    //         ->get();
+    //     return $orderDetails;
+    // }
     public function getDetailProductSoldByMonth(string $month)
     {
         $orderDetails = DB::table('order_details')
@@ -197,14 +263,22 @@ class OrderRepository extends BaseRepository implements OrderInterface
             products.name as product_name,
             products.image as image_url,
             products.description as product_description,
-            ROUND(products.price * (1 - COALESCE(MAX(orders.discount_amount), 0) / 100), 2) as discounted_price,
+            ROUND(SUM(order_details.quantity * products.price * (1 - COALESCE(orders.discount_amount, 0) / 100)), 2) as discounted_price,
             SUM(order_details.quantity) as quantity,
             DATE_FORMAT(orders.created_at, "%Y-%m") as month
         ')
-            ->whereRaw('DATE_FORMAT(orders.created_at, "%Y-%m") = ?', [$month])  // Lọc theo tháng
-            ->groupBy('product_id', 'month')
+            ->whereRaw('DATE_FORMAT(orders.created_at, "%Y-%m") = ?', [$month])
+            ->where('orders.status', '!=', 'canceled')
+            ->groupBy(
+                'products.id',
+                'products.name',
+                'products.image',
+                'products.description',
+                DB::raw('DATE_FORMAT(orders.created_at, "%Y-%m")')
+            )
             ->orderBy('month', 'asc')
             ->get();
+
         return $orderDetails;
     }
 }

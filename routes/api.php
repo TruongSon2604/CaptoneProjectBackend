@@ -57,6 +57,9 @@ Route::group([
     Route::get('/getProductByid/{id}', [ProductController::class, 'getProductByid']);
     Route::get('/getProductLimit', [ProductController::class, 'getProductLimit']);
     Route::post('/filterProductBySelect', [ProductController::class, 'filterProductBySelect']);
+    Route::get('/getproductDiscount', [ProductController::class, 'getproductDiscount']);
+    Route::post('/findProductByImage', [ProductController::class, 'findProductByImage']);
+
     //discount
     Route::get('/discount', [DiscountController::class, 'index']);
     Route::get('/discount/{discount}', [DiscountController::class, 'show']);

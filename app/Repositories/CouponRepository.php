@@ -31,7 +31,7 @@ class CouponRepository extends BaseRepository implements CouponInterface
     }
     public function getAllWithPagination(): LengthAwarePaginator
     {
-        return $this->model->paginate(5);
+        return $this->model->paginate(50);
     }
 
     public function getAllWithPagination2()

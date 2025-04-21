@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Category extends Model
 {
     use HasFactory;
-    const ITEM_PER_PAGE=5;
+    const ITEM_PER_PAGE=50;
     protected $fillable = [
         'image',
         'name',

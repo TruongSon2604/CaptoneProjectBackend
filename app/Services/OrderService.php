@@ -197,10 +197,10 @@ class OrderService
         return $this->orderRepository->updateOrderStatus($data);
     }
 
-    public function cancelOrder(array $data)
-    {
-        return $this->orderRepository->cancelOrder($data);
-    }
+    // public function cancelOrder(array $data)
+    // {
+    //     return $this->orderRepository->cancelOrder($data);
+    // }
 
     public function getOrderDashBoard()
     {
@@ -222,5 +222,10 @@ class OrderService
     public function getDetailProductSoldByMonth(string $month)
     {
         return $this->orderRepository->getDetailProductSoldByMonth($month);
+    }
+
+    public function cancelOrder(array $data)
+    {
+        return $this->orderRepository->cancelOrder($data);
     }
 }

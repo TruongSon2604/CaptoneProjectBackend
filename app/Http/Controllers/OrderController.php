@@ -108,11 +108,26 @@ class OrderController extends Controller
     public function cancelOrder(Request $request)
     {
         $order = $this->orderService->cancelOrder($request->all());
+        if ($order == 0) {
+            return response()->json([
+                'message' => 'Cannot cancel a completed order',
+                'status' => true,
+                'data' => 0
+            ], 400);
+        } else if ($order == 1) {
+            return response()->json([
+                'message' => 'Order canceled and stock updated successfully',
+                'status' => true,
+                'data' => 1
+            ]);
+        }
+
         return response()->json([
-            'status' => true,
-            'data' => $order,
-            'message' => "Order Cancelled Successfully"
-        ]);
+            'message' => 'Failed to cancel order',
+            'status' => false,
+            'data' => 2
+        ], 500);
+
     }
 
     public function getOrderDashBoard()

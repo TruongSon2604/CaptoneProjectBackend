@@ -139,4 +139,8 @@ class CategoryRepository extends BaseRepository implements CategoryInterface
         // $products = $category->products()->where('price', '>', 48500)->paginate(2);
         // return ['category' => $category, 'products' => $products];
     }
+    // public function getAllWithPagination()
+    // {
+    //     return $this->model->paginate(50);
+    // }
 }

@@ -271,7 +271,7 @@ class ProductController extends Controller
                 'message' => 'Vui lòng nhập từ khóa tìm kiếm'
             ], 400);
         }
-        $products= $this->productService->searchProduct($query);
+        $products = $this->productService->searchProduct($query);
         return response()->json([
             'success' => true,
             'data' => $products
@@ -279,7 +279,7 @@ class ProductController extends Controller
     }
     public function getProductDashboard()
     {
-        $count= $this->productService->getProductDashboard();
+        $count = $this->productService->getProductDashboard();
         return response()->json([
             'success' => true,
             'data' => $count
@@ -288,10 +288,29 @@ class ProductController extends Controller
 
     public function getTotalProductOfCategory()
     {
-        $count= $this->productService->getTotalProductOfCategory();
+        $count = $this->productService->getTotalProductOfCategory();
         return response()->json([
             'success' => true,
             'data' => $count
         ]);
     }
+
+    public function getproductDiscount()
+    {
+        $data = $this->productService->getproductDiscount();
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
+    }
+
+    public function findProductByImage(Request $request)
+    {
+        $data = $this->productService->findProductByImage($request->input('data'));
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
+    }
+
 }
