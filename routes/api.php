@@ -73,6 +73,9 @@ Route::group([
 
     Route::get('/getCommentByProductId/{id}', [CommentController::class, 'getCommentByProductId']);
 
+    //post
+    Route::get('/post/{id}', [PostController::class, 'show']);
+
 
     Route::middleware('auth:api')->group(function () {
         Route::middleware('is_admin')->group(function () {
@@ -94,12 +97,12 @@ Route::group([
             Route::post('/coupon', [CouponController::class, 'store']);
             Route::delete('/deleteMoreCoupon', [CouponController::class, 'deleteMoreCoupon']);
 
-            //Coupon
+            //post
             Route::delete('/post/{coupposton}', [PostController::class, 'destroy']);
             Route::post('/post/{post}', [PostController::class, 'update']);
             Route::post('/post', [PostController::class, 'store']);
             Route::delete('/deleteMorePost', [PostController::class, 'destroy']);
-
+            Route::post('/post/{id}', [PostController::class, 'update']);
 
             //Discount
             Route::post('discount/{discount}', [DiscountController::class, 'update']);
@@ -181,3 +184,9 @@ Route::group([
 Route::post('/payment2/callback', [ZaloPayOrderController::class, 'paymentCallback']);
 Route::get('/payment2/status/{iddh}', [ZaloPayOrderController::class, 'get_status']);
 
+
+
+use App\Http\Controllers\VnpayController;
+Route::get('/vnpay/payment', [VnPayController::class, 'createPayment']);
+Route::post('/vnpay/payment', [VnPayController::class, 'createPayment']);
+Route::get('/vnpay/return', [VnPayController::class, 'vnpayReturn']);
