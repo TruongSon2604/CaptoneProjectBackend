@@ -49,7 +49,7 @@ class OrderService
                 'address_id' => $address_id,
                 'coupon_id' => $coupon_id ? $coupon_id : null,
                 // 'order_number' => 'ORD-' . date('YmdHi'),
-                'order_number' => 'ORD-' . now()->format('YmdHis') . rand(1000, 9999).uniqid(),
+                'order_number' => 'ORD-' . now()->format('YmdHis') . rand(1000, 9999) . uniqid(),
                 'total_amount' => $totalAmount,
                 'discount_amount' => $discountAmount,
                 'final_amount' => $finalAmount,
@@ -119,7 +119,7 @@ class OrderService
         try {
             // $user = Auth::user();
             $address_id = $data['address_id'];
-            $coupon_id = $data['coupon_id'] ?? null;
+            $coupon_id = $data['coupon_id']?? null;
             $cartItems = $data['cartItems'];
             Log::info('Create order zalo2');
             if (empty($cartItems)) {
@@ -138,7 +138,7 @@ class OrderService
                 'user_id' => $data['user_id'],
                 'address_id' => $address_id,
                 'coupon_id' => $coupon_id ? $coupon_id : null,
-                'order_number' => 'ORD-' . now()->format('YmdHis') . rand(1000, 9999).uniqid(),
+                'order_number' => 'ORD-' . now()->format('YmdHis') . rand(1000, 9999) . uniqid(),
                 'total_amount' => $totalAmount,
                 'discount_amount' => $discountAmount,
                 'final_amount' => $finalAmount,
@@ -163,10 +163,17 @@ class OrderService
                     $product->stock_quantity -= $item['quantity'];
                     $product->save();
                 }
+                $updateCouponUser = DB::update(
+                    'UPDATE user_coupons SET applied_at = ? WHERE user_id = ? AND coupon_id = ?',
+                    [Carbon::now(), $data['user_id'], $coupon_id]
+                );
+
+
             } catch (Exception $e) {
                 Log::info('catch');
                 dd($e->getMessage());
             }
+
             Log::info('commit');
             DB::commit();
 

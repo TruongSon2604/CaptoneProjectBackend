@@ -46,7 +46,7 @@ class ZaloPayService
             "amount" => $total_amount,
             "description" => "Payment for the order of Userid #$userId",
             "bank_code" => "zalopayapp",
-            "callback_url" => "https://6e12-14-191-113-218.ngrok-free.app/api/payment2/callback"
+            "callback_url" => "https://3730-14-191-113-227.ngrok-free.app/api/payment2/callback"
         ];
 
         $data = $order["app_id"] . "|" . $order["app_trans_id"] . "|" . $order["app_user"] . "|" . $order["amount"]
@@ -147,6 +147,7 @@ class ZaloPayService
             $status1 = Status::create([
                 'name' => 'Đã thanh toán',
             ]);
+            Log::info("zalopay parse data", $parsedData);
             $orderZalo = $this->orderService->createOrderZalo($parsedData);
             Log::info("ZaloPay Payment Success: Transaction {$orderZalo} {$status1}");
 

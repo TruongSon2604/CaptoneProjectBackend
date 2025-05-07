@@ -186,7 +186,8 @@ Route::get('/payment2/status/{iddh}', [ZaloPayOrderController::class, 'get_statu
 
 
 
-use App\Http\Controllers\VnpayController;
+use App\Http\Controllers\VnPayController;
 Route::get('/vnpay/payment', [VnPayController::class, 'createPayment']);
 Route::post('/vnpay/payment', [VnPayController::class, 'createPayment']);
 Route::get('/vnpay/return', [VnPayController::class, 'vnpayReturn']);
+Route::get('/vnpay/checkPaymentStatus/{id}', [VnPayController::class, 'checkPaymentStatus']);

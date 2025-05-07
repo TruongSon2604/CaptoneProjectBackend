@@ -2,24 +2,56 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
+use App\Services\OrderService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
 
 class VnpayController extends Controller
 {
+    public $vnref;
+    public function __construct(protected OrderService $orderService)
+    {
+
+    }
     public function createPayment(Request $request)
     {
         try {
             date_default_timezone_set('Asia/Ho_Chi_Minh');
-
+            $app_trans_id = date("ymd_Hi") . "_" . mt_rand(100, 999);
             // Get the amount from the request
-            $tongtien = $request->input('sotien');
+            $embeddata = json_encode([
+                "address_id" => $request['address_id'],
+                "coupon_id" => $request['coupon_id'] ?? null,
+                "user_id" => Auth::id(),
+                "app_trans_id" => $app_trans_id
+            ]);
+            $items = json_encode($request['cartItems']);
+            $itemsBase64 = base64_encode($items);
+            $vnp_TxnRef = time();
+            Cache::put("vnpay_data_{$vnp_TxnRef}", [
+                'embeddata' => $embeddata,
+                'cartItems' => $request['cartItems'],
+                'user_id' => Auth::id(),
+
+            ], now()->addMinutes(30));
+
+            // $tongtien = $request->input('sotien');
+            $dataInput = [
+                'address_id' => $request->input('address_id'),
+                'coupon_id' => $request->input('coupon_id', null),
+                'cartItems' => $request->input('cartItems', []),
+            ];
+
+            // Gọi hàm xử lý
+            $totalAmount = $this->orderService->getFinalAmount($dataInput);
+
             $vnp_TmnCode = "VWPBXIW4";
             $vnp_HashSecret = "TI9GAED46JYTYRNOV936B4FA6K60VEB4"; // Secret key
             $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"; // VNPAY URL
-            $vnp_Returnurl = "https://7212-14-191-113-227.ngrok-free.app/api/vnpay/return"; // Return URL after payment
+            $vnp_Returnurl = "https://3730-14-191-113-227.ngrok-free.app/api/vnpay/return"; // Return URL after payment
             $vnp_apiUrl = "http://sandbox.vnpayment.vn/merchant_webapi/merchant.html";
 
             // Get current time and expiration time
@@ -27,10 +59,9 @@ class VnpayController extends Controller
             $expire = date('YmdHis', strtotime('+15 minutes', strtotime($startTime)));
 
             // Transaction details
-            $vnp_TxnRef = time(); // Use current time as the order reference
             $vnp_OrderInfo = 'Thanh toán đơn hàng đặt tại web'; // Your order info
             $vnp_OrderType = 'billpayment';
-            $vnp_Amount = $tongtien * 100; // Convert the amount to the smallest unit
+            $vnp_Amount = $totalAmount * 100; // Convert the amount to the smallest unit
             $vnp_Locale = 'vn'; // Vietnamese locale
             $vnp_IpAddr = $request->ip();
 
@@ -48,7 +79,11 @@ class VnpayController extends Controller
                 "vnp_OrderType" => $vnp_OrderType,
                 "vnp_ReturnUrl" => $vnp_Returnurl,
                 "vnp_TxnRef" => $vnp_TxnRef,
-                "vnp_ExpireDate" => $expire
+                "vnp_ExpireDate" => $expire,
+                "vnp_Bill_Address" => $request['address_id'],
+                "vnp_Bill_City" => $request['coupon_id'],
+                "vnp_Bill_Country" => Auth::id(),
+                "vnp_Inv_Phone" => $itemsBase64
             ];
 
             // Sort the input data array by key
@@ -69,6 +104,7 @@ class VnpayController extends Controller
             return response()->json([
                 'code' => '00',
                 'message' => 'success',
+                'transaction_id' => $app_trans_id,
                 'data' => $vnp_Url
             ]);
         } catch (\Exception $e) {
@@ -109,10 +145,23 @@ class VnpayController extends Controller
                     $vnp_TxnRef = $vnp_Params['vnp_TxnRef']; // Mã giao dịch
                     $vnp_Amount = $vnp_Params['vnp_Amount']; // Số tiền giao dịch
 
-                    // Xử lý thành công (Lưu vào DB, gửi email thông báo, v.v...)
-                    // Ví dụ: Cập nhật trạng thái đơn hàng vào DB
-                    // Order::where('txn_ref', $vnp_TxnRef)->update(['status' => 'success']);
+                    // Retrieve data from cache
+                    $data = Cache::get("vnpay_data_{$vnp_TxnRef}");
 
+                    $embedData = json_decode($data['embeddata'], true);
+
+                    $parsedData = [
+                        "address_id" => $embedData['address_id'] ?? null,
+                        "coupon_id" => $embedData['coupon_id'] ?? null,
+                        "user_id" => $embedData['user_id'] ?? null,
+                        "cartItems" => $data['cartItems'] ?? [],
+                        "transaction_id" => $embedData['app_trans_id'] ?? null,
+                    ];
+                    Log::info("------------------");
+                    Log::info("Parsed Data: ", $parsedData);
+
+                    $orderZalo = $this->orderService->createOrderZalo($parsedData);
+                    Log::info("ZaloPay Payment Success: Transaction {$orderZalo}");
                     return response()->json([
                         'code' => '00',
                         'message' => 'Thanh toán thành công!',
@@ -143,5 +192,14 @@ class VnpayController extends Controller
                 'details' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function checkPaymentStatus($transaction_id)
+    {
+        Log::info("transaction_id: " . $transaction_id);
+        $hasOrder = Order::where('transaction_id', $transaction_id)->exists();
+        return response()->json([
+            'status' => $hasOrder ? 'success' : 'pending'
+        ]);
     }
 }
