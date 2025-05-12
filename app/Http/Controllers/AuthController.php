@@ -5,9 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserUpdateRequest;
 use App\Models\User;
+use Illuminate\Http\Request;
+// use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 // use Validator;
 
@@ -169,6 +175,64 @@ class AuthController extends Controller
         return response()->json([
             'status' => true,
             'data' => $countUser,
+        ]);
+    }
+
+    public function changePasswordByEmail(Request $request)
+    {
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'User not found.',
+            ], 404);
+        }
+
+        $newPassword = Str::random(10);
+        $user->password = bcrypt($newPassword);
+        $user->save();
+
+        Mail::raw("Mật khẩu mới của bạn là: $newPassword", function ($message) use ($user) {
+            $message->to($user->email)
+                ->subject('Mật khẩu mới từ hệ thống');
+        });
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Mật khẩu mới đã được gửi đến email.',
+        ]);
+    }
+
+    public function updatePasswordManually(Request $request)
+    {
+        Log::info("111");
+        // $request->validate([
+        //     'email' => 'required|email|exists:users,email',
+        //     'temporary_password' => 'required',
+        //     'new_password' => 'required|confirmed|min:8',
+        // ]);
+
+        $user = User::where('email', $request->email)->first();
+        Log::info($user);
+
+
+        // Kiểm tra mật khẩu tạm thời
+        if (!Hash::check($request->temporary_password, $user->password)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Temporary password is incorrect.',
+            ], 400);
+        }
+        Log::info("Temporary password is correct.");
+        // Cập nhật mật khẩu mới
+        $user->password = bcrypt($request->new_password);
+        $user->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Password has been updated successfully.',
         ]);
     }
 }

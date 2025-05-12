@@ -51,7 +51,7 @@ class VnpayController extends Controller
             $vnp_TmnCode = "VWPBXIW4";
             $vnp_HashSecret = "TI9GAED46JYTYRNOV936B4FA6K60VEB4"; // Secret key
             $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"; // VNPAY URL
-            $vnp_Returnurl = "https://3730-14-191-113-227.ngrok-free.app/api/vnpay/return"; // Return URL after payment
+            $vnp_Returnurl = "https://383b-14-191-113-227.ngrok-free.app/api/vnpay/return"; // Return URL after payment
             $vnp_apiUrl = "http://sandbox.vnpayment.vn/merchant_webapi/merchant.html";
 
             // Get current time and expiration time

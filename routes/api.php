@@ -24,6 +24,8 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
 ], function ($router) {
+    Route::post('/forget-password', [AuthController::class, 'changePasswordByEmail'])->name('changePasswordByEmail');
+    Route::post('/update-password', [AuthController::class, 'updatePasswordManually'])->name('updatePasswordManually');
     Route::post('/register', [AuthController::class, 'register'])->name('register');
     Route::post('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/updateUser', [AuthController::class, 'updateUser'])->name('updateUser');
@@ -62,6 +64,7 @@ Route::group([
 
     //discount
     Route::get('/discount', [DiscountController::class, 'index']);
+    Route::get('/getProductNotDiscounted', [DiscountController::class, 'getProductNotDiscounted']);
     Route::get('/discount/{discount}', [DiscountController::class, 'show']);
     //category
     Route::get('/categories', [CategoryController::class, 'index']);
@@ -108,6 +111,8 @@ Route::group([
             Route::post('discount/{discount}', [DiscountController::class, 'update']);
             Route::post('/discount', [DiscountController::class, 'store']);
             Route::delete('/discount/{discount}', [DiscountController::class, 'destroy']);
+            Route::delete('/deleteMoreDiscount', [DiscountController::class, 'deleteMore']);
+
         });
 
         //Coupon
