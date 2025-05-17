@@ -206,14 +206,27 @@ class OrderRepository extends BaseRepository implements OrderInterface
 
     public function getTotal()
     {
-        $totalValue = Order::sum('final_amount');
+        // $totalValue = Order::sum('final_amount');
+        // return $totalValue;
+        $totalValue = Order::where('status', '!=', 'canceled')->sum('final_amount');
         return $totalValue;
     }
 
     public function getRevenueByMonth()
     {
+        // $revenueByMonth = DB::table('orders')
+        //     ->select(DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'), DB::raw('SUM(final_amount) as total_revenue'))
+        //     ->groupBy('month')
+        //     ->orderBy('month', 'asc')
+        //     ->get();
+
+        // return $revenueByMonth;
         $revenueByMonth = DB::table('orders')
-            ->select(DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'), DB::raw('SUM(final_amount) as total_revenue'))
+            ->where('status', '!=', 'canceled')
+            ->select(
+                DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'),
+                DB::raw('SUM(final_amount) as total_revenue')
+            )
             ->groupBy('month')
             ->orderBy('month', 'asc')
             ->get();

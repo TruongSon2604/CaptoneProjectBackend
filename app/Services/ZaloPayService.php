@@ -46,7 +46,7 @@ class ZaloPayService
             "amount" => $total_amount,
             "description" => "Payment for the order of Userid #$userId",
             "bank_code" => "zalopayapp",
-            "callback_url" => "https://383b-14-191-113-227.ngrok-free.app/api/payment2/callback"
+            "callback_url" => "https://5ac8-117-2-182-195.ngrok-free.app/api/payment2/callback"
         ];
 
         $data = $order["app_id"] . "|" . $order["app_trans_id"] . "|" . $order["app_user"] . "|" . $order["amount"]
